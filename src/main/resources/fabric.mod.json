@@ -1,0 +1,35 @@
+{
+	"schemaVersion": 1,
+	"id": "enderscape-polymer-patch",
+	"version": "${version}",
+	"name": "Polymer Patch for Enderscape",
+	"description": "Polymer Patch for Enderscape",
+	"authors": [
+		"Patbox"
+	],
+	"contact": {
+		"homepage": "https://pb4.eu",
+		"sources": "https://github.com/PolymerPorts/enderscape-patch"
+	},
+	"license": "LGPLv3",
+	"icon": "assets/enderscape-patch/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+          "eu.pb4.enderscapepatch.impl.EnderscapePolymerPatch"
+		],
+		"mixinsquared": [
+			"eu.pb4.enderscapepatch.mixin.EnderscapePolymerPatchMixinCanceller"
+		]
+	},
+	"mixins": [
+		"enderscape-polymer-patch.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.16.4",
+		"enderscape": "*",
+		"minecraft": ">=1.21.6-",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}

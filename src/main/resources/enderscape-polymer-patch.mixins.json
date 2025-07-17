@@ -1,0 +1,39 @@
+{
+  "required": true,
+  "package": "eu.pb4.enderscapepatch.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "AbstractOvergrowthBlockAccessor",
+    "DataTrackerBuilderMixin",
+    "DataTrackerMixin",
+    "DirectionPropertiesAccessor",
+    "EntityMixin",
+    "LivingEntityMixin",
+    "ServerPlayerEntityMixin",
+    "ServerPlayNetworkingMixin",
+    "mod.DrifterMixin",
+    "mod.DriftJellyBlockMixin",
+    "mod.EnderscapeBlockEntitiesMixin",
+    "mod.EnderscapeBlocksMixin",
+    "mod.EnderscapeCreativeModeTabMixin",
+    "mod.EnderscapeDataComponentsMixin",
+    "mod.EnderscapeEnchantmentEffectComponentsMixin",
+    "mod.EnderscapeEntitiesMixin",
+    "mod.EnderscapeItemsMixin",
+    "mod.EnderscapeMixin",
+    "mod.EnderscapeMobEffectsMixin",
+    "mod.EnderscapeNoteBlockInstrumentsMixin",
+    "mod.EnderscapeParticlesMixin",
+    "mod.EnderscapePotionsMixin",
+    "mod.EnderscapeStatsMixin",
+    "mod.MagniaAttractorItemMixin",
+    "mod.ReplacementAbstractMinecartMixin",
+    "mod.ReplacementExperienceOrbMixin",
+    "mod.ReplacementItemEntityMixin",
+    "mod.ReplacementLivingEntityMixin",
+    "mod.RubblemiteMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
