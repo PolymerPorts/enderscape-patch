@@ -8,6 +8,7 @@
     "DataTrackerMixin",
     "DirectionPropertiesAccessor",
     "EntityMixin",
+    "LivingEntityAccessor",
     "LivingEntityMixin",
     "ServerPlayerEntityMixin",
     "ServerPlayNetworkingMixin",
@@ -35,5 +36,8 @@
   ],
   "injectors": {
     "defaultRequire": 1
-  }
+  },
+  "client": [
+    "mod.client.EnderscapeParticleProvidersMixin"
+  ]
 }

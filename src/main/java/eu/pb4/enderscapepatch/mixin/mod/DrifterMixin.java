@@ -1,15 +1,11 @@
 package eu.pb4.enderscapepatch.mixin.mod;
 
 import eu.pb4.enderscapepatch.impl.entity.BasePolymerEntity;
-import eu.pb4.enderscapepatch.impl.entity.VanillishEntityModel;
+import eu.pb4.factorytools.api.block.model.generic.BlockStateModelManager;
+import eu.pb4.factorytools.api.virtualentity.emuvanilla.poly.SimpleEntityModel;
 import eu.pb4.enderscapepatch.impl.entity.model.EntityModels;
-import eu.pb4.enderscapepatch.impl.entity.model.emuvanilla.PolyModelInstance;
-import eu.pb4.enderscapepatch.impl.entity.model.emuvanilla.model.EntityModel;
-import eu.pb4.enderscapepatch.impl.model.generic.BlockStateModelManager;
 import eu.pb4.polymer.virtualentity.api.attachment.UniqueIdentifiableAttachment;
 import net.bunten.enderscape.entity.drifter.Drifter;
-import net.bunten.enderscape.entity.rubblemite.Rubblemite;
-import net.bunten.enderscape.entity.rubblemite.RubblemiteVariant;
 import net.bunten.enderscape.registry.EnderscapeBlocks;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -40,9 +36,9 @@ public abstract class DrifterMixin extends LivingEntity {
         super.onTrackedDataSet(data);
         if (data == DRIPPING_JELLY) {
             var model = UniqueIdentifiableAttachment.get(this, BasePolymerEntity.MODEL);
-            if (model != null && model.holder() instanceof VanillishEntityModel<?> entityModel) {
+            if (model != null && model.holder() instanceof SimpleEntityModel<?> entityModel) {
                 //noinspection unchecked
-                ((VanillishEntityModel<Drifter>) entityModel).setModel(this.getDataTracker().get(DRIPPING_JELLY) ? EntityModels.DRIFTER_WITH_JELLY : EntityModels.DRIFTER);
+                ((SimpleEntityModel<Drifter>) entityModel).setModel(this.getDataTracker().get(DRIPPING_JELLY) ? EntityModels.DRIFTER_WITH_JELLY : EntityModels.DRIFTER);
             }
         }
     }

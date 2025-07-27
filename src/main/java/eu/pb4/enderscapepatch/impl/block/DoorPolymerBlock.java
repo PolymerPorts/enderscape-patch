@@ -1,8 +1,8 @@
 package eu.pb4.enderscapepatch.impl.block;
 
-import eu.pb4.enderscapepatch.impl.model.generic.BSMMParticleBlock;
-import eu.pb4.enderscapepatch.impl.model.generic.BlockStateModel;
+import eu.pb4.factorytools.api.block.model.generic.BSMMParticleBlock;
 import eu.pb4.factorytools.api.block.FactoryBlock;
+import eu.pb4.factorytools.api.block.model.generic.BlockStateModel;
 import eu.pb4.polymer.blocks.api.BlockModelType;
 import eu.pb4.polymer.blocks.api.PolymerBlockResourceUtils;
 import eu.pb4.polymer.blocks.api.PolymerTexturedBlock;
@@ -43,7 +43,7 @@ public record DoorPolymerBlock() implements FactoryBlock, PolymerTexturedBlock, 
 
     @Override
     public @Nullable ElementHolder createElementHolder(ServerWorld world, BlockPos pos, BlockState initialBlockState) {
-        return BlockStateModel.midRange(initialBlockState);
+        return BlockStateModel.midRange(initialBlockState, pos);
     }
 
     @Override

@@ -6,6 +6,7 @@
 package eu.pb4.enderscapepatch.mixin.mod;
 
 import java.util.Iterator;
+import java.util.Set;
 
 import eu.pb4.enderscapepatch.impl.EnderscapePolymerPatch;
 import net.bunten.enderscape.EnderscapeConfig;
@@ -35,10 +36,14 @@ import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerPosition;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket;
+import net.minecraft.network.packet.s2c.play.PositionFlag;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.math.MathHelper;
@@ -249,6 +254,15 @@ public abstract class ReplacementLivingEntityMixin extends Entity implements Mag
             double maxSpeed = 2.0;
             double frictionMod = Math.min(1.0, 0.96 + Math.max(0.0, (Math.hypot(vel.x, vel.z) - maxSpeed) / maxSpeed) * 0.5);
             this.mob.setVelocity(vel.x / frictionMod, vel.y, vel.z / frictionMod);
+            // Patch change start -->
+            if (this.mob instanceof ServerPlayerEntity player) {
+                var mov = player.getMovement();
+                player.networkHandler.sendPacket(new PlayerPositionLookS2CPacket(0,
+                        new PlayerPosition(Vec3d.ZERO, new Vec3d(mov.getX() / frictionMod - mov.getX(), 0, mov.getZ() / frictionMod - mov.getZ()), 0, 0),
+                        Set.of(PositionFlag.DELTA_X, PositionFlag.DELTA_Y, PositionFlag.DELTA_Z, PositionFlag.X, PositionFlag.Y, PositionFlag.Z, PositionFlag.X_ROT, PositionFlag.Y_ROT)
+                ));
+            }
+            // <-- Patch change end
         }
 
         if (!this.isGliding() && this.Enderscape$elytraGroundTicks > 0) {
@@ -265,11 +279,17 @@ public abstract class ReplacementLivingEntityMixin extends Entity implements Mag
             double x = this.random.nextGaussian() * 0.02 + vel.x;
             double y = this.random.nextGaussian() * 0.02 + vel.y;
             double z = this.random.nextGaussian() * 0.02 + vel.z;
-            if (ticks > 40 && ticks % 5 == 0 && ticks != 60) {
-                this.getWorld().addParticleClient(new DashJumpShockwaveParticleOptions(vel.toVector3f(), (float)ticks / 60.0F), this.getX(), this.getY() + (double)(this.getHeight() / 2.0F), this.getZ(), vel.x, vel.y, vel.z);
+            // Patch change start -->
+
+            if (this.getWorld() instanceof ServerWorld serverWorld) {
+                if (ticks > 40 && ticks % 5 == 0 && ticks != 60) {
+                    serverWorld.spawnParticles(ParticleTypes.SONIC_BOOM, this.getX(), this.getY() + (double)(this.getHeight() / 2.0F), this.getZ(), 0, vel.x, vel.y, vel.z, 1);
+                }
+                serverWorld.spawnParticles(ParticleTypes.FIREWORK, this.getParticleX(1.0) - vel.x / 2.0, this.getRandomBodyY() - vel.y / 2.0, this.getParticleZ(1.0) - vel.z / 2.0, 0,  x, y, z, 1);
             }
 
-            this.getWorld().addParticleClient(EnderscapeParticles.DASH_JUMP_SPARKS, this.getParticleX(1.0) - vel.x / 2.0, this.getRandomBodyY() - vel.y / 2.0, this.getParticleZ(1.0) - vel.z / 2.0, x, y, z);
+            // <-- Patch change end
+
             DashJumpUser.setDashTicks(this.mob, ticks - 1);
             if (ticks <= 0 || ticks < 50 && vel.lengthSquared() < 0.6) {
                 DashJumpUser.setDashed(this.mob, false);
@@ -369,9 +389,11 @@ public abstract class ReplacementLivingEntityMixin extends Entity implements Mag
     }
 
     static {
+        // Patch change start -->
         MAGNIA_COOLDOWN_DATA = new TrackedData<>(EnderscapePolymerPatch.FAKE_TRACKER_INDEX, TrackedDataHandlerRegistry.INTEGER);
         DASHED_DATA = new TrackedData<>(EnderscapePolymerPatch.FAKE_TRACKER_INDEX, TrackedDataHandlerRegistry.BOOLEAN);
         DASH_TICKS_DATA = new TrackedData<>(EnderscapePolymerPatch.FAKE_TRACKER_INDEX, TrackedDataHandlerRegistry.INTEGER);
         SPAWNED_FROM_END_TRIAL_SPAWNER_DATA = new TrackedData<>(EnderscapePolymerPatch.FAKE_TRACKER_INDEX, TrackedDataHandlerRegistry.BOOLEAN);
+        // <-- Patch change end
     }
 }

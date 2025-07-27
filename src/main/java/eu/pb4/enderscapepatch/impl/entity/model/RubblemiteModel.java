@@ -1,7 +1,8 @@
 package eu.pb4.enderscapepatch.impl.entity.model;
 
-import eu.pb4.enderscapepatch.impl.entity.model.emuvanilla.model.*;
-import eu.pb4.enderscapepatch.impl.entity.model.emuvanilla.model.Dilation;
+import eu.pb4.factorytools.api.virtualentity.emuvanilla.EntityValueExtraction;
+import eu.pb4.factorytools.api.virtualentity.emuvanilla.model.*;
+import eu.pb4.factorytools.api.virtualentity.emuvanilla.model.Dilation;
 import net.bunten.enderscape.entity.rubblemite.Rubblemite;
 import net.minecraft.util.math.MathHelper;
 
@@ -43,7 +44,7 @@ public class RubblemiteModel extends EntityModel<Rubblemite> {
             ModelPart var10000 = this.shell;
             var10000.pitch += state.getPitch() * 0.017453292F / 2.0F;
             var10000 = this.shell;
-            var10000.yaw += (state.getHeadYaw() - state.getYaw()) * 0.017453292F / 2.0F;
+            var10000.yaw += EntityValueExtraction.getRelativeHeadYaw(state) * 0.017453292F / 2.0F;
         }
 
         this.head.visible = !state.isInsideShell() && !state.isDashing();

@@ -1,9 +1,9 @@
 package eu.pb4.enderscapepatch.impl.block;
 
 import eu.pb4.factorytools.api.block.FactoryBlock;
+import eu.pb4.factorytools.api.block.model.generic.BlockStateModel;
 import eu.pb4.factorytools.api.virtualentity.BlockModel;
-import eu.pb4.enderscapepatch.impl.model.generic.BSMMParticleBlock;
-import eu.pb4.enderscapepatch.impl.model.generic.BlockStateModel;
+import eu.pb4.factorytools.api.block.model.generic.BSMMParticleBlock;
 import eu.pb4.polymer.blocks.api.BlockModelType;
 import eu.pb4.polymer.blocks.api.PolymerBlockResourceUtils;
 import eu.pb4.polymer.blocks.api.PolymerTexturedBlock;
@@ -21,9 +21,10 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 import xyz.nucleoid.packettweaker.PacketContext;
 
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
-public record WaterloggableFactoryBlock(BlockState clientState, BlockState waterloggedClientState, boolean tick, Function<BlockState, BlockModel> modelFunction) implements FactoryBlock, PolymerTexturedBlock, BSMMParticleBlock {
+public record WaterloggableFactoryBlock(BlockState clientState, BlockState waterloggedClientState, boolean tick, BiFunction<BlockState, BlockPos, BlockModel> modelFunction) implements FactoryBlock, PolymerTexturedBlock, BSMMParticleBlock {
     public static final WaterloggableFactoryBlock BARRIER = new WaterloggableFactoryBlock(Blocks.BARRIER.getDefaultState(),
             Blocks.BARRIER.getDefaultState().with(BarrierBlock.WATERLOGGED, true), false,
             BlockStateModel::longRange);
@@ -48,7 +49,7 @@ public record WaterloggableFactoryBlock(BlockState clientState, BlockState water
 
     @Override
     public @Nullable ElementHolder createElementHolder(ServerWorld world, BlockPos pos, BlockState initialBlockState) {
-        return this.modelFunction.apply(initialBlockState);
+        return this.modelFunction.apply(initialBlockState, pos);
     }
 
     @Override
@@ -56,7 +57,7 @@ public record WaterloggableFactoryBlock(BlockState clientState, BlockState water
         return this.tick;
     }
 
-    public WaterloggableFactoryBlock withModel(Function<BlockState, BlockModel> modelFunction) {
+    public WaterloggableFactoryBlock withModel(BiFunction<BlockState, BlockPos, BlockModel> modelFunction) {
         return new WaterloggableFactoryBlock(this.clientState, this.waterloggedClientState, this.tick, modelFunction);
     }
 

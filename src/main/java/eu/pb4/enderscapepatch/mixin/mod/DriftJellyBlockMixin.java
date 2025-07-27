@@ -1,6 +1,6 @@
 package eu.pb4.enderscapepatch.mixin.mod;
 
-import eu.pb4.enderscapepatch.impl.model.generic.BlockStateModelManager;
+import eu.pb4.factorytools.api.block.model.generic.BlockStateModelManager;
 import net.bunten.enderscape.block.DriftJellyBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;

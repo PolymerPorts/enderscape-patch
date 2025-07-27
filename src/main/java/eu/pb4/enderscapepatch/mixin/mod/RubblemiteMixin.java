@@ -1,10 +1,10 @@
 package eu.pb4.enderscapepatch.mixin.mod;
 
 import eu.pb4.enderscapepatch.impl.entity.BasePolymerEntity;
-import eu.pb4.enderscapepatch.impl.entity.VanillishEntityModel;
+import eu.pb4.factorytools.api.virtualentity.emuvanilla.poly.SimpleEntityModel;
 import eu.pb4.enderscapepatch.impl.entity.model.EntityModels;
-import eu.pb4.enderscapepatch.impl.entity.model.emuvanilla.PolyModelInstance;
-import eu.pb4.enderscapepatch.impl.entity.model.emuvanilla.model.EntityModel;
+import eu.pb4.factorytools.api.virtualentity.emuvanilla.PolyModelInstance;
+import eu.pb4.factorytools.api.virtualentity.emuvanilla.model.EntityModel;
 import eu.pb4.polymer.virtualentity.api.attachment.UniqueIdentifiableAttachment;
 import net.bunten.enderscape.entity.rubblemite.Rubblemite;
 import net.bunten.enderscape.entity.rubblemite.RubblemiteVariant;
@@ -25,9 +25,9 @@ public abstract class RubblemiteMixin extends LivingEntity {
         super.onTrackedDataSet(data);
         if (data == RubblemiteVariant.DATA) {
             var model = UniqueIdentifiableAttachment.get(this, BasePolymerEntity.MODEL);
-            if (model != null && model.holder() instanceof VanillishEntityModel<?> entityModel) {
+            if (model != null && model.holder() instanceof SimpleEntityModel<?> entityModel) {
                 //noinspection unchecked
-                ((VanillishEntityModel<Rubblemite>) entityModel).setModel(
+                ((SimpleEntityModel<Rubblemite>) entityModel).setModel(
                         (PolyModelInstance<EntityModel<Rubblemite>>) (Object) EntityModels.RUBBLEMITE.get(RubblemiteVariant.byId(this.getDataTracker().get(RubblemiteVariant.DATA)))
                 );
             }

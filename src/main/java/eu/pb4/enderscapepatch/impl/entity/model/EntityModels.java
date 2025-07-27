@@ -1,20 +1,19 @@
 package eu.pb4.enderscapepatch.impl.entity.model;
 
-import eu.pb4.enderscapepatch.impl.entity.model.DrifterModel;
-import eu.pb4.enderscapepatch.impl.entity.model.DriftletModel;
-import eu.pb4.enderscapepatch.impl.entity.model.RubblemiteModel;
-import eu.pb4.enderscapepatch.impl.entity.model.RustleModel;
-import eu.pb4.enderscapepatch.impl.entity.model.emuvanilla.PolyModelInstance;
-import eu.pb4.enderscapepatch.impl.entity.model.emuvanilla.model.EntityModel;
-import eu.pb4.enderscapepatch.impl.entity.model.emuvanilla.model.ModelPart;
-import eu.pb4.enderscapepatch.impl.entity.model.emuvanilla.model.TexturedModelData;
+import eu.pb4.factorytools.api.virtualentity.emuvanilla.PolyModelInstance;
+import eu.pb4.factorytools.api.virtualentity.emuvanilla.model.EntityModel;
+import eu.pb4.factorytools.api.virtualentity.emuvanilla.model.ModelPart;
+import eu.pb4.factorytools.api.virtualentity.emuvanilla.model.TexturedModelData;
 import net.bunten.enderscape.Enderscape;
 import net.bunten.enderscape.entity.rubblemite.RubblemiteVariant;
+import net.bunten.enderscape.registry.EnderscapeEntities;
+import net.minecraft.entity.EntityType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.function.Function;
 
@@ -33,6 +32,15 @@ public interface EntityModels {
         }
     });
     PolyModelInstance<RustleModel> RUSTLE = create(RustleModel::new, RustleModel.createLayer(), Enderscape.id("entity/rustle/rustle"));
+
+    IdentityHashMap<EntityType<?>, PolyModelInstance<?>> BY_TYPE = Util.make(() -> {
+        var m = new IdentityHashMap<EntityType<?>, PolyModelInstance<?>>();
+        m.put(EnderscapeEntities.DRIFTER, EntityModels.DRIFTER);
+        m.put(EnderscapeEntities.DRIFTLET, EntityModels.DRIFTLET);
+        m.put(EnderscapeEntities.RUBBLEMITE, EntityModels.RUBBLEMITE.get(RubblemiteVariant.END_STONE));
+        m.put(EnderscapeEntities.RUSTLE, EntityModels.RUSTLE);
+        return m;
+    });
 
     static <T extends EntityModel<?>> PolyModelInstance<T> create(Function<ModelPart, T> modelCreator, TexturedModelData data, Identifier texture) {
         var instance = PolyModelInstance.create(modelCreator, data, texture);

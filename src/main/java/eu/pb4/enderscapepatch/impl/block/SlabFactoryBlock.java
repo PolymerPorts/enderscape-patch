@@ -1,10 +1,8 @@
 package eu.pb4.enderscapepatch.impl.block;
 
-import eu.pb4.enderscapepatch.impl.model.SignModel;
-import eu.pb4.enderscapepatch.impl.model.generic.BSMMParticleBlock;
-import eu.pb4.enderscapepatch.impl.model.generic.BlockStateModel;
-import eu.pb4.enderscapepatch.impl.model.generic.ShiftyBlockStateModel;
+import eu.pb4.factorytools.api.block.model.generic.BSMMParticleBlock;
 import eu.pb4.factorytools.api.block.FactoryBlock;
+import eu.pb4.factorytools.api.block.model.generic.ShiftyBlockStateModel;
 import eu.pb4.factorytools.api.virtualentity.BlockModel;
 import eu.pb4.polymer.blocks.api.PolymerTexturedBlock;
 import eu.pb4.polymer.virtualentity.api.ElementHolder;
@@ -22,10 +20,10 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 import xyz.nucleoid.packettweaker.PacketContext;
 
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
-public record SlabFactoryBlock(Block clientBlock, Function<BlockState, BlockModel> modelFunction) implements FactoryBlock, PolymerTexturedBlock, BSMMParticleBlock {
-    public static final SlabFactoryBlock SLAB = new SlabFactoryBlock(Blocks.SANDSTONE_SLAB, ShiftyBlockStateModel::longRange);
+public record SlabFactoryBlock(Block clientBlock, BiFunction<BlockState, BlockPos, BlockModel> modelFunction) implements FactoryBlock, PolymerTexturedBlock, BSMMParticleBlock {
+    public static final SlabFactoryBlock INSTANCE = new SlabFactoryBlock(Blocks.SANDSTONE_SLAB, ShiftyBlockStateModel::longRange);
 
     @Override
     public BlockState getPolymerBlockState(BlockState state, PacketContext context) {
@@ -34,7 +32,7 @@ public record SlabFactoryBlock(Block clientBlock, Function<BlockState, BlockMode
 
     @Override
     public @Nullable ElementHolder createElementHolder(ServerWorld world, BlockPos pos, BlockState initialBlockState) {
-        return this.modelFunction.apply(initialBlockState);
+        return this.modelFunction.apply(initialBlockState, pos);
     }
 
     @Override

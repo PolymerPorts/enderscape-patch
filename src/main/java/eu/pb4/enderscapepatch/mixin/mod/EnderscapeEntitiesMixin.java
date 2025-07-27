@@ -5,6 +5,7 @@ import eu.pb4.polymer.core.api.entity.PolymerEntityUtils;
 import net.bunten.enderscape.registry.EnderscapeEntities;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.registry.RegistryKey;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -15,6 +16,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class EnderscapeEntitiesMixin {
     @Inject(method = "register(Lnet/minecraft/registry/RegistryKey;Lnet/minecraft/entity/EntityType$Builder;)Lnet/minecraft/entity/EntityType;", at = @At("TAIL"))
     private static void polymerify(RegistryKey<EntityType<?>> resourceKey, EntityType.Builder<?> builder, CallbackInfoReturnable<EntityType<Entity>> cir) {
-        PolymerEntityUtils.registerOverlay(cir.getReturnValue(), x -> new BasePolymerEntity((Entity) x));
+        PolymerEntityUtils.registerOverlay(cir.getReturnValue(), x -> new BasePolymerEntity((LivingEntity) x));
     }
 }

@@ -1,7 +1,8 @@
 package eu.pb4.enderscapepatch.impl.entity.model;
 
-import eu.pb4.enderscapepatch.impl.entity.model.emuvanilla.model.*;
-import eu.pb4.enderscapepatch.impl.entity.model.emuvanilla.model.Dilation;
+import eu.pb4.factorytools.api.virtualentity.emuvanilla.EntityValueExtraction;
+import eu.pb4.factorytools.api.virtualentity.emuvanilla.model.*;
+import eu.pb4.factorytools.api.virtualentity.emuvanilla.model.Dilation;
 import net.bunten.enderscape.entity.drifter.Drifter;
 import net.minecraft.util.math.MathHelper;
 
@@ -55,7 +56,7 @@ public class DrifterModel extends EntityModel<Drifter> {
         float age = state.age;
         float animPos = state.limbAnimator.getAnimationProgress(1);
         float animSpeed = state.limbAnimator.getAmplitude(1);
-        this.head.yaw = (state.getHeadYaw() - state.getYaw()) * 0.017453292F;
+        this.head.yaw = EntityValueExtraction.getRelativeHeadYaw(state) * 0.017453292F;
         this.head.pitch = state.getPitch() * 0.017453292F + MathHelper.sin(age * 0.2F) * 0.1F;
         this.head.roll = 0.1F * MathHelper.sin(animPos * 0.8F) * 2.0F * animSpeed * 0.25F;
         ModelPart var10000 = this.head;

@@ -2,10 +2,9 @@ package eu.pb4.enderscapepatch.impl.block;
 
 import com.google.gson.JsonParser;
 import com.mojang.serialization.JsonOps;
-import eu.pb4.enderscapepatch.impl.model.generic.BSMMParticleBlock;
-import eu.pb4.enderscapepatch.impl.model.generic.BlockStateModel;
-import eu.pb4.enderscapepatch.impl.model.generic.BlockStateModelManager;
+import eu.pb4.factorytools.api.block.model.generic.BSMMParticleBlock;
 import eu.pb4.factorytools.api.block.FactoryBlock;
+import eu.pb4.factorytools.api.block.model.generic.BlockStateModelManager;
 import eu.pb4.polymer.blocks.api.BlockModelType;
 import eu.pb4.polymer.blocks.api.PolymerBlockModel;
 import eu.pb4.polymer.blocks.api.PolymerBlockResourceUtils;

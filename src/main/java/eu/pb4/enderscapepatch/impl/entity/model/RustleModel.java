@@ -1,8 +1,9 @@
 package eu.pb4.enderscapepatch.impl.entity.model;
 
-import eu.pb4.enderscapepatch.impl.entity.model.emuvanilla.animation.Animation;
-import eu.pb4.enderscapepatch.impl.entity.model.emuvanilla.model.*;
-import eu.pb4.enderscapepatch.impl.entity.model.emuvanilla.model.Dilation;
+import eu.pb4.factorytools.api.virtualentity.emuvanilla.EntityValueExtraction;
+import eu.pb4.factorytools.api.virtualentity.emuvanilla.animation.Animation;
+import eu.pb4.factorytools.api.virtualentity.emuvanilla.model.*;
+import eu.pb4.factorytools.api.virtualentity.emuvanilla.model.Dilation;
 import net.bunten.enderscape.entity.rustle.Rustle;
 import net.minecraft.util.math.MathHelper;
 
@@ -60,7 +61,7 @@ public class RustleModel extends EntityModel<Rustle> {
         ModelPart var10000 = this.head;
         var10000.pitch += state.getPitch() * 0.017453292F / 2.0F;
         var10000 = this.head;
-        var10000.yaw += (state.getHeadYaw() - state.getYaw()) * 0.017453292F / 2.0F;
+        var10000.yaw += EntityValueExtraction.getRelativeHeadYaw(state) * 0.017453292F / 2.0F;
         this.head.roll = MathHelper.sin(age + animPos / 3.0F * 0.06F) * animSpeed * 0.5F;
         this.body.roll = MathHelper.sin(age + animPos / 3.0F * 0.03F) * animSpeed * 0.25F;
         this.frontSpines.yaw = MathHelper.sin(age + animPos / 3.0F * 0.1F) * animSpeed * 0.8F;

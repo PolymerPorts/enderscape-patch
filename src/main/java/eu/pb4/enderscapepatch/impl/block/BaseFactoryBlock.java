@@ -1,9 +1,9 @@
 package eu.pb4.enderscapepatch.impl.block;
 
 import eu.pb4.factorytools.api.block.FactoryBlock;
+import eu.pb4.factorytools.api.block.model.generic.BlockStateModel;
+import eu.pb4.factorytools.api.block.model.generic.BSMMParticleBlock;
 import eu.pb4.factorytools.api.virtualentity.BlockModel;
-import eu.pb4.enderscapepatch.impl.model.generic.BSMMParticleBlock;
-import eu.pb4.enderscapepatch.impl.model.generic.BlockStateModel;
 import eu.pb4.polymer.blocks.api.BlockModelType;
 import eu.pb4.polymer.blocks.api.PolymerBlockResourceUtils;
 import eu.pb4.polymer.blocks.api.PolymerTexturedBlock;
@@ -19,9 +19,9 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
 import xyz.nucleoid.packettweaker.PacketContext;
 
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
-public record BaseFactoryBlock(BlockState clientState, boolean tick, Function<BlockState, BlockModel> modelFunction) implements FactoryBlock, PolymerTexturedBlock, BSMMParticleBlock {
+public record BaseFactoryBlock(BlockState clientState, boolean tick, BiFunction<BlockState, BlockPos, BlockModel> modelFunction) implements FactoryBlock, PolymerTexturedBlock, BSMMParticleBlock {
     public static final BaseFactoryBlock BARRIER = new BaseFactoryBlock(Blocks.BARRIER. getDefaultState(), false, BlockStateModel::longRange);
     public static final BaseFactoryBlock TOP_TRAPDOOR = new BaseFactoryBlock(PolymerBlockResourceUtils.requestEmpty(BlockModelType.TOP_TRAPDOOR), false, BlockStateModel::longRange);
     public static final BaseFactoryBlock VINE = new BaseFactoryBlock(PolymerBlockResourceUtils.requestEmpty(BlockModelType.VINES_BLOCK), false, BlockStateModel::longRange);
@@ -38,7 +38,7 @@ public record BaseFactoryBlock(BlockState clientState, boolean tick, Function<Bl
 
     @Override
     public @Nullable ElementHolder createElementHolder(ServerWorld world, BlockPos pos, BlockState initialBlockState) {
-        return this.modelFunction.apply(initialBlockState);
+        return this.modelFunction.apply(initialBlockState, pos);
     }
 
     @Override
@@ -46,7 +46,7 @@ public record BaseFactoryBlock(BlockState clientState, boolean tick, Function<Bl
         return this.tick;
     }
 
-    public BaseFactoryBlock withModel(Function<BlockState, BlockModel> modelFunction) {
+    public BaseFactoryBlock withModel(BiFunction<BlockState, BlockPos, BlockModel> modelFunction) {
         return new BaseFactoryBlock(this.clientState, this.tick, modelFunction);
     }
 

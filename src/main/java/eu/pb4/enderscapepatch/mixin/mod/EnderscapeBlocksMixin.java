@@ -2,14 +2,15 @@ package eu.pb4.enderscapepatch.mixin.mod;
 
 import eu.pb4.enderscapepatch.impl.EnderscapePolymerPatch;
 import eu.pb4.enderscapepatch.impl.block.*;
-import eu.pb4.enderscapepatch.impl.model.SignModel;
-import eu.pb4.enderscapepatch.impl.model.generic.BlockStateModelManager;
 import eu.pb4.enderscapepatch.mixin.AbstractOvergrowthBlockAccessor;
 import eu.pb4.enderscapepatch.mixin.DirectionPropertiesAccessor;
+import eu.pb4.factorytools.api.block.model.SignModel;
+import eu.pb4.factorytools.api.block.model.generic.BlockStateModelManager;
 import eu.pb4.polymer.blocks.api.BlockModelType;
 import eu.pb4.polymer.common.api.PolymerCommonUtils;
 import eu.pb4.polymer.core.api.block.PolymerBlock;
 import eu.pb4.polymer.virtualentity.api.BlockWithElementHolder;
+import net.bunten.enderscape.Enderscape;
 import net.bunten.enderscape.block.*;
 import net.bunten.enderscape.block.properties.DirectionProperties;
 import net.bunten.enderscape.block.properties.Part;
@@ -68,7 +69,7 @@ public class EnderscapeBlocksMixin {
         } else if (block instanceof MurublightShelfBlock) {
             overlay = BaseFactoryBlock.SAPLING_SHORT;
         }else if (block instanceof SlabBlock) {
-            overlay = SlabFactoryBlock.SLAB;
+            overlay = SlabFactoryBlock.INSTANCE;
         } else if (block instanceof StairsBlock) {
             overlay = StateCopyFactoryBlock.STAIR;
         } else if (block instanceof WallBlock) {
@@ -87,22 +88,22 @@ public class EnderscapeBlocksMixin {
             overlay = StateCopyFactoryBlock.BUTTON;
         } else if (block instanceof SignBlock) {
             overlay = StateCopyFactoryBlock.SIGN;
-            SignModel.addBlock(path, block);
         } else if (block instanceof WallSignBlock) {
             overlay = StateCopyFactoryBlock.WALL_SIGN;
-            SignModel.addBlock(path, block);
         } else if (block instanceof HangingSignBlock) {
             overlay = StateCopyFactoryBlock.HANGING_SIGN;
-            SignModel.addBlock(path, block);
         } else if (block instanceof WallHangingSignBlock) {
             overlay = StateCopyFactoryBlock.HANGING_WALL_SIGN;
-            SignModel.addBlock(path, block);
         } else if (block instanceof WispSproutsBlock) {
             overlay = RealSingleStatePolymerBlock.of(block, BlockModelType.TRIPWIRE_BLOCK);
         } else if (block instanceof VeiledLeavesBlock) {
             overlay = RealSingleStatePolymerBlock.of(block, BlockModelType.TRANSPARENT_BLOCK);
         } else if (!(block instanceof BlockEntityProvider) && !path.equals("drift_jelly_block") && block.getDefaultState().isFullCube(PolymerCommonUtils.getFakeWorld(), BlockPos.ORIGIN)) {
             overlay = StatePolymerBlock.of(block, BlockModelType.FULL_BLOCK);
+        }
+
+        if (block instanceof AbstractSignBlock) {
+            EnderscapePolymerPatch.LATE_INIT.add(() -> SignModel.setModel(block, Enderscape.id("block_sign/" + path)));
         }
 
         if (overlay == null) {

@@ -1,8 +1,8 @@
 package eu.pb4.enderscapepatch.impl.entity.model;
 
-import eu.pb4.enderscapepatch.impl.entity.model.emuvanilla.animation.*;
-import eu.pb4.enderscapepatch.impl.entity.model.emuvanilla.animation.AnimationDefinition.Builder;
-import eu.pb4.enderscapepatch.impl.entity.model.emuvanilla.animation.Transformation.*;
+import eu.pb4.factorytools.api.virtualentity.emuvanilla.animation.*;
+import eu.pb4.factorytools.api.virtualentity.emuvanilla.animation.AnimationDefinition.Builder;
+import eu.pb4.factorytools.api.virtualentity.emuvanilla.animation.Transformation.*;
 
 public class RustleAnimations {
     public static final AnimationDefinition SLEEPING;

@@ -2,12 +2,12 @@ package eu.pb4.enderscapepatch.impl.res;
 
 
 import eu.pb4.enderscapepatch.impl.entity.model.EntityModels;
-import eu.pb4.enderscapepatch.impl.model.generic.BlockStateModelManager;
+import eu.pb4.factorytools.api.block.model.generic.BlockStateModelManager;
+import eu.pb4.factorytools.api.resourcepack.ModelModifiers;
 import eu.pb4.polymer.resourcepack.api.AssetPaths;
 import eu.pb4.polymer.resourcepack.api.PolymerResourcePackUtils;
 import eu.pb4.polymer.resourcepack.api.ResourcePackBuilder;
 import eu.pb4.polymer.resourcepack.extras.api.format.atlas.AtlasAsset;
-import eu.pb4.polymer.resourcepack.extras.api.format.atlas.SingleAtlasSource;
 import eu.pb4.polymer.resourcepack.extras.api.format.item.ItemAsset;
 import eu.pb4.polymer.resourcepack.extras.api.format.item.model.ConditionItemModel;
 import eu.pb4.polymer.resourcepack.extras.api.format.item.model.EmptyItemModel;
@@ -16,6 +16,7 @@ import eu.pb4.polymer.resourcepack.extras.api.format.item.property.bool.BooleanP
 import eu.pb4.polymer.resourcepack.extras.api.format.item.property.bool.CustomModelDataFlagProperty;
 import eu.pb4.polymer.resourcepack.extras.api.format.model.ModelAsset;
 import eu.pb4.polymer.resourcepack.extras.api.format.model.ModelElement;
+import it.unimi.dsi.fastutil.floats.FloatList;
 import net.bunten.enderscape.Enderscape;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
@@ -44,6 +45,7 @@ public class ResourcePackGenerator {
     }
 
     private static void build(ResourcePackBuilder builder) {
+        final var expansion = new Vec3d(0.08, 0.08, 0.08);
         var atlas = AtlasAsset.builder();
 
         for (var model : EntityModels.ALL) {
@@ -71,8 +73,6 @@ public class ResourcePackGenerator {
             e.printStackTrace();
         }
 
-        final var signExtension = new Vec3d(0.04, 0.04, 0.04);
-
         builder.forEachFile(((string, bytes) -> {
             for (var expandable : EXPANDABLE) {
                 if (string.contains(expandable) && string.startsWith("assets/enderscape/models/block/")) {
@@ -82,7 +82,7 @@ public class ResourcePackGenerator {
                         var parentAsset = ModelAsset.fromJson(new String(Objects.requireNonNull(builder.getDataOrSource(AssetPaths.model(parentId) + ".json")), StandardCharsets.UTF_8));
 
                         builder.addData(AssetPaths.model("enderscape-patch", parentId.getPath()) + ".json", new ModelAsset(parentAsset.parent(), parentAsset.elements().map(x -> x.stream()
-                                .map(element -> new ModelElement(element.from().subtract(new Vec3d(0.06, 0.06, 0.06)), element.to().add(new Vec3d(0.06, 0.06, 0.06)),
+                                .map(element -> new ModelElement(element.from().subtract(expansion), element.to().add(expansion),
                                         element.faces(), element.rotation(), element.shade(), element.lightEmission())
                                 ).toList()), parentAsset.textures(), parentAsset.display(), parentAsset.guiLight(), parentAsset.ambientOcclusion()).toBytes());
                     }
@@ -90,8 +90,8 @@ public class ResourcePackGenerator {
             }
         }));
 
-        for (var entry : BlockStateModelManager.UV_LOCKED_MODELS.entrySet()) {
-            var expand = EXPANDABLE.stream().anyMatch(expandable -> entry.getKey().getPath().contains(expandable) && entry.getKey().getPath().startsWith("block/")) ? new Vec3d(0.06, 0.06, 0.06) : Vec3d.ZERO;
+        for (var entry : BlockStateModelManager.UV_LOCKED_MODELS.get("enderscape").entrySet()) {
+            var expand = EXPANDABLE.stream().anyMatch(expandable -> entry.getKey().contains(expandable) && entry.getKey().startsWith("block/")) ? expansion : Vec3d.ZERO;
             for (var v : entry.getValue()) {
                 var suffix = "_uvlock_" + v.x() + "_" + v.y();
                 var modelId = v.model().withSuffixedPath(suffix);
@@ -101,72 +101,7 @@ public class ResourcePackGenerator {
                     var parentId = asset.parent().get();
                     var parentAsset = ModelAsset.fromJson(new String(Objects.requireNonNull(builder.getDataOrSource(AssetPaths.model(parentId) + ".json")), StandardCharsets.UTF_8));
                     builder.addData(AssetPaths.model("enderscape-patch", parentId.getPath() + suffix) + ".json",
-                            new ModelAsset(parentAsset.parent(), parentAsset.elements().map(x -> x.stream()
-                                    .map(element -> new ModelElement(element.from().subtract(expand), element.to().add(expand),
-                                            element.faces().entrySet().stream().map(face -> {
-                                                var uv = face.getValue().uv();
-                                                /*if ((face.getKey().getAxis() == Direction.Axis.Y && v.y() == 0) || (face.getKey().getAxis() != Direction.Axis.Y && v.x() == 0)) {
-                                                    return face;
-                                                }*/
-
-                                                if (uv.isEmpty()) {
-                                                    Vector2f uv1, uv2;
-                                                    int rot;
-                                                    if (face.getKey().getAxis() == Direction.Axis.Y) {
-                                                        uv1 = new Vector2f((float) element.from().getX(), (float) element.from().getZ());
-                                                        uv2 = new Vector2f((float) element.to().getX(), (float) element.to().getZ());
-                                                        rot = v.y();
-                                                    } else {
-                                                        uv1 = new Vector2f((float) element.from().getComponentAlongAxis(face.getKey().rotateYClockwise().getAxis()), 16 - (float) element.to().getY());
-                                                        uv2 = new Vector2f((float) element.to().getComponentAlongAxis(face.getKey().rotateYClockwise().getAxis()), 16 - (float) element.from().getY());
-                                                        rot = v.x();
-                                                    }
-
-                                                    if (rot >= 180) {
-                                                        uv1.set(16 - uv1.x, 16 - uv1.y);
-                                                        uv2.set(16 - uv2.x, 16 - uv2.y);
-                                                    }
-
-                                                    uv = List.of(Math.clamp(Math.min(uv1.x, uv2.x), 0, 16),
-                                                            Math.clamp(Math.min(uv1.y, uv2.y), 0, 16),
-                                                            Math.clamp(Math.max(uv1.x, uv2.x), 0, 16),
-                                                            Math.clamp(Math.max(uv1.y, uv2.y), 0, 16));
-
-                                                    if (rot == 90 || rot == 270 || v.y() == -90) {
-                                                        uv = List.of(uv.get(1), uv.get(0), uv.get(3), uv.get(2));
-                                                    }
-
-                                                    return Map.entry(face.getKey(), new ModelElement.Face(uv, face.getValue().texture(), face.getValue().cullface(),
-                                                            (360 + face.getValue().rotation() - rot * face.getKey().getDirection().offset()) % 360,
-                                                            face.getValue().tintIndex()));
-                                                }
-
-                                                int xBonus = v.x() == 90 || v.x() == 270 ? 180 : 0;
-                                                int yBonus = 0;//v.y() != 90 && v.y() != 270 ? 180 : 0;
-
-                                                if (face.getKey().getAxis() == Direction.Axis.Y && v.y() != 0) {
-                                                    if (v.y() == 90 || v.y() == 270 || v.y() == -90) {
-                                                        uv = List.of(uv.get(1), uv.get(0), uv.get(3), uv.get(2));
-                                                    }
-
-                                                    return Map.entry(face.getKey(), new ModelElement.Face(uv, face.getValue().texture(), face.getValue().cullface(),
-                                                            (360 + face.getValue().rotation() - v.y() * face.getKey().getDirection().offset() + xBonus) % 360,
-                                                            face.getValue().tintIndex()));
-                                                }
-                                                if (face.getKey().getAxis() != Direction.Axis.Y && v.x() != 0) {
-                                                    if (v.x() == 90 || v.x() == 270 || v.x() == -90) {
-                                                        uv = List.of(uv.get(1), uv.get(0), uv.get(3), uv.get(2));
-                                                    }
-
-                                                    return Map.entry(face.getKey(), new ModelElement.Face(uv, face.getValue().texture(), face.getValue().cullface(),
-                                                            (360 + face.getValue().rotation() - v.x() * face.getKey().getDirection().offset() + yBonus) % 360,
-                                                            face.getValue().tintIndex()));
-                                                }
-
-                                                return face;
-                                            }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)), element.rotation(), element.shade(), element.lightEmission())
-                                    ).toList()), parentAsset.textures(), parentAsset.display(), parentAsset.guiLight(), parentAsset.ambientOcclusion()).toBytes());
-
+                            ModelModifiers.expandModelAndRotateUVLocked(parentAsset, expand, v.x(), v.y()));
                     builder.addData(AssetPaths.model(modelId) + ".json",
                             new ModelAsset(Optional.of(Identifier.of("enderscape-patch", parentId.getPath() + suffix)), asset.elements(),
                                     asset.textures(), asset.display(), asset.guiLight(), asset.ambientOcclusion()).toBytes());
@@ -200,64 +135,14 @@ public class ResourcePackGenerator {
                 return new ItemAsset(replacer[0].modifyDeep(EmptyItemModel.INSTANCE, asset.model()), asset.properties()).toBytes();
             }
 
-            if (string.startsWith("assets/enderscape-patch/models/block/template_")) {
-                var asset = ModelAsset.fromJson(new String(bytes, StandardCharsets.UTF_8));
-                return new ModelAsset(asset.parent(), asset.elements().map(x -> x.stream()
-                        .map(element -> new ModelElement(element.from().subtract(signExtension), element.to().add(signExtension),
-                                element.faces().entrySet().stream().map(face -> {
-                                    var uv = face.getValue().uv();
-                                    if (uv.isEmpty()) {
-                                        Vector2f uv1, uv2;
-                                        if (face.getKey().getAxis() == Direction.Axis.Y) {
-                                            uv1 = new Vector2f((float) element.from().getX(), (float) element.from().getZ());
-                                            uv2 = new Vector2f((float) element.to().getX(), (float) element.to().getZ());
-                                        } else {
-                                            uv1 = new Vector2f((float) element.from().getComponentAlongAxis(face.getKey().rotateYClockwise().getAxis()), 16 - (float) element.to().getY());
-                                            uv2 = new Vector2f((float) element.to().getComponentAlongAxis(face.getKey().rotateYClockwise().getAxis()), 16 - (float) element.from().getY());
-                                        }
-
-                                        uv = List.of(Math.clamp(Math.min(uv1.x, uv2.x), 0, 16),
-                                                Math.clamp(Math.min(uv1.y, uv2.y), 0, 16),
-                                                Math.clamp(Math.max(uv1.x, uv2.x), 0, 16),
-                                                Math.clamp(Math.max(uv1.y, uv2.y), 0, 16));
-
-                                        return Map.entry(face.getKey(), new ModelElement.Face(uv, face.getValue().texture(), face.getValue().cullface(),
-                                                face.getValue().rotation(),
-                                                face.getValue().tintIndex()));
-                                    }
-                                    return face;
-                                }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)), element.rotation(), element.shade(), element.lightEmission())
-                        ).toList()), asset.textures(), asset.display(), asset.guiLight(), asset.ambientOcclusion()).toBytes();
-            }
             return bytes;
         }));
 
 
-        createSignModel(builder, "veiled", atlas);
-        createSignModel(builder, "celestial", atlas);
-        createSignModel(builder, "murublight", atlas);
+        ModelModifiers.createSignModel(builder, "enderscape", "veiled", atlas);
+        ModelModifiers.createSignModel(builder, "enderscape","celestial", atlas);
+        ModelModifiers.createSignModel(builder, "enderscape","murublight", atlas);
 
         builder.addData("assets/minecraft/atlases/blocks.json", atlas.build());
-    }
-
-    private static void createSignModel(ResourcePackBuilder builder, String name, AtlasAsset.Builder atlas) {
-        var textureRegular = Enderscape.id("entity/signs/" + name);
-        var textureHanging = Enderscape.id("entity/signs/hanging/" + name);
-
-        atlas.add(new SingleAtlasSource(textureRegular, Optional.empty()));
-        atlas.add(new SingleAtlasSource(textureHanging, Optional.empty()));
-
-        builder.addData(AssetPaths.blockModel(id(name + "_sign")), ModelAsset.builder()
-                .parent(id("block/template_sign"))
-                .texture("sign", textureRegular.toString()).build());
-        builder.addData(AssetPaths.blockModel(id(name + "_wall_sign")), ModelAsset.builder()
-                .parent(id("block/template_wall_sign"))
-                .texture("sign", textureRegular.toString()).build());
-        builder.addData(AssetPaths.blockModel(id(name + "_hanging_sign")), ModelAsset.builder()
-                .parent(id("block/template_hanging_sign"))
-                .texture("sign", textureHanging.toString()).build());
-        builder.addData(AssetPaths.blockModel(id(name + "_wall_hanging_sign")), ModelAsset.builder()
-                .parent(id("block/template_wall_hanging_sign"))
-                .texture("sign", textureHanging.toString()).build());
     }
 }
