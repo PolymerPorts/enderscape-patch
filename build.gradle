@@ -79,7 +79,7 @@ dependencies {
 	modImplementation "dev.isxander:yet-another-config-lib:3.7.1+1.21.6-fabric"
 
 
-	modImplementation include('eu.pb4:factorytools:0.7.3+1.21.8')
+	modImplementation include('eu.pb4:factorytools:0.7.4+1.21.8')
 	modImplementation 'eu.pb4:polymer-core:0.13.8+1.21.8'
 	modImplementation ('eu.pb4:polymer-blocks:0.13.8+1.21.8')
 	modImplementation 'eu.pb4:polymer-resource-pack:0.13.8+1.21.8'
