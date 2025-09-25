@@ -39,14 +39,6 @@ public abstract class ReplacementAbstractMinecartMixin extends Entity implements
             return 0.2F;
         }, DEFAULT_MAGNIA_PREDICATE, (entity) -> {
             entity.setNoGravity(true);
-            if (this.random.nextInt(16) == 0) {
-                World patt0$temp = this.getWorld();
-                if (patt0$temp instanceof ServerWorld) {
-                    ServerWorld server = (ServerWorld)patt0$temp;
-                    server.spawnParticles(ParticleTypes.END_ROD, this.getPos().x, this.getPos().y + 0.5, this.getPos().z, 1, 0.30000001192092896, 0.3, 0.30000001192092896, 0.0);
-                }
-            }
-
         }, (entity) -> {
             entity.setNoGravity(false);
         });

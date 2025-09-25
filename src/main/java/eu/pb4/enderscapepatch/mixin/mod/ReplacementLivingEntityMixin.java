@@ -8,6 +8,8 @@ package eu.pb4.enderscapepatch.mixin.mod;
 import java.util.Iterator;
 import java.util.Set;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import eu.pb4.enderscapepatch.impl.EnderscapePolymerPatch;
 import net.bunten.enderscape.EnderscapeConfig;
 import net.bunten.enderscape.entity.DashJumpUser;
@@ -106,14 +108,6 @@ public abstract class ReplacementLivingEntityMixin extends Entity implements Mag
             }
 
             entity.fallDistance = 0.0;
-            if (this.random.nextInt(16) == 0) {
-                World patt0$temp = this.getWorld();
-                if (patt0$temp instanceof ServerWorld) {
-                    ServerWorld server = (ServerWorld)patt0$temp;
-                    server.spawnParticles(ParticleTypes.END_ROD, this.getPos().x, this.getPos().y + 0.5, this.getPos().z, 1, 0.30000001192092896, 0.3, 0.30000001192092896, 0.0);
-                }
-            }
-
         }, (entity) -> {
             if (entity instanceof LivingEntity living) {
                 if (!(entity instanceof PlayerEntity)) {
@@ -170,15 +164,15 @@ public abstract class ReplacementLivingEntityMixin extends Entity implements Mag
 
     }
 
-    @Redirect(
+    @WrapOperation(
         method = {"canGlide"},
         at = @At(
     value = "INVOKE",
     target = "Lnet/minecraft/entity/LivingEntity;isOnGround()Z"
 )
     )
-    private boolean Enderscape$canGlide(LivingEntity instance) {
-        return EnderscapeEnchantments.hasRebound(this.getWorld(), instance.getEquippedStack(EquipmentSlot.CHEST)) ? this.Enderscape$elytraGroundTicks >= 10 : instance.isOnGround();
+    private boolean Enderscape$canGlide(LivingEntity instance, Operation<Boolean> original) {
+        return EnderscapeEnchantments.hasRebound(this.getWorld(), instance.getEquippedStack(EquipmentSlot.CHEST)) ? this.Enderscape$elytraGroundTicks >= 10 : original.call(instance);
     }
 
     @Inject(
@@ -223,7 +217,7 @@ public abstract class ReplacementLivingEntityMixin extends Entity implements Mag
                     NebuliteToolContext context = new NebuliteToolContext(stack, this.getWorld(), player);
                     if (stack.getItem() instanceof MagniaAttractorItem && NebuliteToolItem.fuelExceedsCost(context)) {
                         MagniaAttractorItem.incrementEntitiesPulled(stack, 1);
-                        MagniaAttractorItem.tryUseFuel(context, 1 - MagniaAttractorItem.getEntitiesPulledToUseFuel(stack));
+                        MagniaAttractorItem.tryUseFuel(context, 1 - MagniaAttractorItem.getTotalEntitiesPulledToUseFuel(stack, mob));
                     }
                 }
             }
