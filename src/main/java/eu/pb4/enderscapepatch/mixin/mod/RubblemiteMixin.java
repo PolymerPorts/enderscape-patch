@@ -1,5 +1,6 @@
 package eu.pb4.enderscapepatch.mixin.mod;
 
+import eu.pb4.enderscapepatch.impl.EnderscapePolymerPatch;
 import eu.pb4.enderscapepatch.impl.entity.BasePolymerEntity;
 import eu.pb4.factorytools.api.virtualentity.emuvanilla.poly.SimpleEntityModel;
 import eu.pb4.enderscapepatch.impl.entity.model.EntityModels;
@@ -10,12 +11,16 @@ import net.bunten.enderscape.entity.rubblemite.Rubblemite;
 import net.bunten.enderscape.entity.rubblemite.RubblemiteVariant;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.data.DataTracked;
 import net.minecraft.entity.data.TrackedData;
+import net.minecraft.entity.data.TrackedDataHandler;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(Rubblemite.class)
 public abstract class RubblemiteMixin extends LivingEntity {
@@ -37,5 +42,10 @@ public abstract class RubblemiteMixin extends LivingEntity {
                 );
             }
         }
+    }
+
+    @Redirect(method = "<clinit>", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/data/DataTracker;registerData(Ljava/lang/Class;Lnet/minecraft/entity/data/TrackedDataHandler;)Lnet/minecraft/entity/data/TrackedData;"))
+    private static TrackedData<Object> forceFakeForSerializerCheckSkip(Class<? extends DataTracked> entityClass, TrackedDataHandler<Object> dataHandler) {
+        return new TrackedData<>(EnderscapePolymerPatch.FAKE_TRACKER_INDEX, dataHandler);
     }
 }
