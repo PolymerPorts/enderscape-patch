@@ -26,7 +26,7 @@ public interface EntityModels {
         var instance = create(RubblemiteModel::new, RubblemiteModel.createLayer(), EnderscapeRubblemiteVariants.DEFAULT.getValue().withPrefixedPath("entity/rubblemite/"));
         m.put(EnderscapeRubblemiteVariants.DEFAULT, instance);
         for (var variant : EnderscapeRubblemiteVariants.RUBBLEMITE_VARIANTS) {
-            m.put(variant, instance.withTexture(variant.getValue().withPrefixedPath("entity/rubblemite/")));
+            m.put(variant, withTexture(instance, variant.getValue().withPrefixedPath("entity/rubblemite/")));
         }
     });
     PolyModelInstance<RustleModel> RUSTLE = create(RustleModel::new, RustleModel.createLayer(), Enderscape.id("entity/rustle/rustle"));
