@@ -2,11 +2,10 @@ package eu.pb4.enderscapepatch.mixin;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import com.llamalad7.mixinextras.sugar.Local;
 import eu.pb4.enderscapepatch.impl.entity.BasePolymerEntity;
 import eu.pb4.polymer.core.api.entity.PolymerEntity;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerPosition;
+import net.minecraft.entity.EntityPosition;
 import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket;
 import net.minecraft.network.packet.s2c.play.PositionFlag;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -24,7 +23,7 @@ public class EntityMixin {
         if (instance instanceof ServerPlayerEntity player
                 && (PolymerEntity.get((Entity) (Object) this) instanceof BasePolymerEntity || PolymerEntity.get(otherEntity) instanceof BasePolymerEntity) ) {
             player.networkHandler.sendPacket(new PlayerPositionLookS2CPacket(0,
-                    new PlayerPosition(Vec3d.ZERO, new Vec3d(deltaX, deltaY, deltaZ), 0, 0),
+                    new EntityPosition(Vec3d.ZERO, new Vec3d(deltaX, deltaY, deltaZ), 0, 0),
                     Set.of(PositionFlag.DELTA_X, PositionFlag.DELTA_Y, PositionFlag.DELTA_Z, PositionFlag.X, PositionFlag.Y, PositionFlag.Z, PositionFlag.X_ROT, PositionFlag.Y_ROT)
             ));
         }

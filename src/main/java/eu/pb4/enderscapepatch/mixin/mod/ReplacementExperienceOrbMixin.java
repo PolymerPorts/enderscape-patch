@@ -47,10 +47,10 @@ public abstract class ReplacementExperienceOrbMixin extends Entity implements Ma
         }, (item) -> {
             this.orb.setNoGravity(true);
             if (this.random.nextInt(16) == 0) {
-                World patt0$temp = this.getWorld();
+                World patt0$temp = this.getEntityWorld();
                 if (patt0$temp instanceof ServerWorld) {
                     ServerWorld server = (ServerWorld)patt0$temp;
-                    server.spawnParticles(ParticleTypes.END_ROD, this.getPos().x, this.getPos().y + 0.5, this.getPos().z, 1, 0.30000001192092896, 0.3, 0.30000001192092896, 0.0);
+                    server.spawnParticles(ParticleTypes.END_ROD, this.getEntityPos().x, this.getEntityPos().y + 0.5, this.getEntityPos().z, 1, 0.30000001192092896, 0.3, 0.30000001192092896, 0.0);
                 }
             }
 

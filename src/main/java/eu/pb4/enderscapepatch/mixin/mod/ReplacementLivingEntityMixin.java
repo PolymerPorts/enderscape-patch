@@ -25,10 +25,7 @@ import net.bunten.enderscape.registry.EnderscapeMobEffects;
 import net.bunten.enderscape.registry.EnderscapeParticles;
 import net.bunten.enderscape.registry.tag.EnderscapeEntityTags;
 import net.minecraft.component.DataComponentTypes;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.*;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.data.DataTracker;
@@ -36,7 +33,6 @@ import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerPosition;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -107,10 +103,10 @@ public abstract class ReplacementLivingEntityMixin extends Entity implements Mag
 
             entity.fallDistance = 0.0;
             if (this.random.nextInt(16) == 0) {
-                World patt0$temp = this.getWorld();
+                World patt0$temp = this.getEntityWorld();
                 if (patt0$temp instanceof ServerWorld) {
                     ServerWorld server = (ServerWorld)patt0$temp;
-                    server.spawnParticles(ParticleTypes.END_ROD, this.getPos().x, this.getPos().y + 0.5, this.getPos().z, 1, 0.30000001192092896, 0.3, 0.30000001192092896, 0.0);
+                    server.spawnParticles(ParticleTypes.END_ROD, this.getEntityPos().x, this.getEntityPos().y + 0.5, this.getEntityPos().z, 1, 0.30000001192092896, 0.3, 0.30000001192092896, 0.0);
                 }
             }
 
@@ -164,7 +160,7 @@ public abstract class ReplacementLivingEntityMixin extends Entity implements Mag
         cancellable = true
     )
     public void Enderscape$canStandOnFluid(FluidState state, CallbackInfoReturnable<Boolean> info) {
-        if (this.isGliding() && EnderscapeEnchantments.hasRebound(this.getWorld(), this.getEquippedStack(EquipmentSlot.CHEST)) && this.getVelocity().getY() > -0.9) {
+        if (this.isGliding() && EnderscapeEnchantments.hasRebound(this.getEntityWorld(), this.getEquippedStack(EquipmentSlot.CHEST)) && this.getVelocity().getY() > -0.9) {
             info.setReturnValue(true);
         }
 
@@ -178,7 +174,7 @@ public abstract class ReplacementLivingEntityMixin extends Entity implements Mag
 )
     )
     private boolean Enderscape$canGlide(LivingEntity instance) {
-        return EnderscapeEnchantments.hasRebound(this.getWorld(), instance.getEquippedStack(EquipmentSlot.CHEST)) ? this.Enderscape$elytraGroundTicks >= 10 : instance.isOnGround();
+        return EnderscapeEnchantments.hasRebound(this.getEntityWorld(), instance.getEquippedStack(EquipmentSlot.CHEST)) ? this.Enderscape$elytraGroundTicks >= 10 : instance.isOnGround();
     }
 
     @Inject(
@@ -220,7 +216,7 @@ public abstract class ReplacementLivingEntityMixin extends Entity implements Mag
                 PlayerEntity player = (PlayerEntity)var5;
                 ItemStack stack = MagniaAttractorItem.getValidAttractor(player.getInventory());
                 if (!stack.isEmpty()) {
-                    NebuliteToolContext context = new NebuliteToolContext(stack, this.getWorld(), player);
+                    NebuliteToolContext context = new NebuliteToolContext(stack, this.getEntityWorld(), player);
                     if (stack.getItem() instanceof MagniaAttractorItem && NebuliteToolItem.fuelExceedsCost(context)) {
                         MagniaAttractorItem.incrementEntitiesPulled(stack, 1);
                         MagniaAttractorItem.tryUseFuel(context, 1 - MagniaAttractorItem.getEntitiesPulledToUseFuel(stack));
@@ -258,7 +254,7 @@ public abstract class ReplacementLivingEntityMixin extends Entity implements Mag
             if (this.mob instanceof ServerPlayerEntity player) {
                 var mov = player.getMovement();
                 player.networkHandler.sendPacket(new PlayerPositionLookS2CPacket(0,
-                        new PlayerPosition(Vec3d.ZERO, new Vec3d(mov.getX() / frictionMod - mov.getX(), 0, mov.getZ() / frictionMod - mov.getZ()), 0, 0),
+                        new EntityPosition(Vec3d.ZERO, new Vec3d(mov.getX() / frictionMod - mov.getX(), 0, mov.getZ() / frictionMod - mov.getZ()), 0, 0),
                         Set.of(PositionFlag.DELTA_X, PositionFlag.DELTA_Y, PositionFlag.DELTA_Z, PositionFlag.X, PositionFlag.Y, PositionFlag.Z, PositionFlag.X_ROT, PositionFlag.Y_ROT)
                 ));
             }
@@ -270,7 +266,7 @@ public abstract class ReplacementLivingEntityMixin extends Entity implements Mag
         }
 
         if (DashJumpUser.dashed(this.mob)) {
-            vel = this.mob.getPos().subtract(this.mob.getLastRenderPos()).multiply(-1.0);
+            vel = this.mob.getEntityPos().subtract(this.mob.getLastRenderPos()).multiply(-1.0);
             if (this.mob.isSneaking()) {
                 this.mob.setVelocity(this.mob.getVelocity().multiply(0.92, 1.0, 0.92));
             }
@@ -281,7 +277,7 @@ public abstract class ReplacementLivingEntityMixin extends Entity implements Mag
             double z = this.random.nextGaussian() * 0.02 + vel.z;
             // Patch change start -->
 
-            if (this.getWorld() instanceof ServerWorld serverWorld) {
+            if (this.getEntityWorld() instanceof ServerWorld serverWorld) {
                 if (ticks > 40 && ticks % 5 == 0 && ticks != 60) {
                     serverWorld.spawnParticles(ParticleTypes.SONIC_BOOM, this.getX(), this.getY() + (double)(this.getHeight() / 2.0F), this.getZ(), 0, vel.x, vel.y, vel.z, 1);
                 }
@@ -303,7 +299,7 @@ public abstract class ReplacementLivingEntityMixin extends Entity implements Mag
         method = {"checkGlidingCollision"}
     )
     private void Enderscape$handleFallFlyingCollisions(double start, double last, CallbackInfo info) {
-        if (this.isOnGround() && this.mob.getVelocity().lengthSquared() > 0.4 && !EnderscapeEnchantments.hasRebound(this.getWorld(), this.getEquippedStack(EquipmentSlot.CHEST))) {
+        if (this.isOnGround() && this.mob.getVelocity().lengthSquared() > 0.4 && !EnderscapeEnchantments.hasRebound(this.getEntityWorld(), this.getEquippedStack(EquipmentSlot.CHEST))) {
             this.Enderscape$playLandingEffects(start, last);
         }
 
@@ -322,7 +318,7 @@ public abstract class ReplacementLivingEntityMixin extends Entity implements Mag
                 double d = this.random.nextGaussian() * 0.02;
                 double e = this.random.nextGaussian() * 0.02;
                 double f = this.random.nextGaussian() * 0.02;
-                this.getWorld().addParticleClient(EnderscapeParticles.VOID_POOF, this.getParticleX(1.0) - d * 10.0, this.getRandomBodyY() - e * 10.0, this.getParticleZ(1.0) - f * 10.0, d, e, f);
+                this.getEntityWorld().addParticleClient(EnderscapeParticles.VOID_POOF, this.getParticleX(1.0) - d * 10.0, this.getRandomBodyY() - e * 10.0, this.getParticleZ(1.0) - f * 10.0, d, e, f);
             }
         }
 
@@ -330,12 +326,12 @@ public abstract class ReplacementLivingEntityMixin extends Entity implements Mag
 
     @Unique
     private void Enderscape$playLandingEffects(double start, double last) {
-        this.mob.getWorld().playSound((Entity)null, this.mob.getX(), this.mob.getY(), this.mob.getZ(), EnderscapeItemSounds.ELYTRA_LAND, SoundCategory.PLAYERS, 1.0F, 1.0F);
-        World var6 = this.getWorld();
+        this.mob.getEntityWorld().playSound((Entity)null, this.mob.getX(), this.mob.getY(), this.mob.getZ(), EnderscapeItemSounds.ELYTRA_LAND, SoundCategory.PLAYERS, 1.0F, 1.0F);
+        World var6 = this.getEntityWorld();
         if (var6 instanceof ServerWorld server) {
             double difference = start - last;
             float severity = (float)(difference * 10.0 - 3.0);
-            Vec3d pos = this.getPos();
+            Vec3d pos = this.getEntityPos();
             int count = (int)(MathHelper.clamp(this.mob.getVelocity().lengthSquared() * 40.0, 5.0, 100.0) + (this.fallDistance + (double)severity) * 5.0);
             server.spawnParticles(ParticleTypes.POOF, pos.x, pos.y + 0.2, pos.z, count, 0.0, 0.0, 0.0, 0.3);
             server.spawnParticles(ParticleTypes.EXPLOSION, pos.x, pos.y + 0.2, pos.z, 1, 0.0, 0.0, 0.0, 0.3);

@@ -11,11 +11,20 @@ import net.bunten.enderscape.entity.rubblemite.RubblemiteVariant;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.data.TrackedData;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.world.World;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(Rubblemite.class)
 public abstract class RubblemiteMixin extends LivingEntity {
+    @Shadow
+    @Final
+    private static TrackedData<RegistryEntry<RubblemiteVariant>> DATA_VARIANT_ID;
+
+    @Shadow public abstract RegistryEntry<RubblemiteVariant> getVariant();
+
     protected RubblemiteMixin(EntityType<? extends LivingEntity> entityType, World world) {
         super(entityType, world);
     }
@@ -23,12 +32,12 @@ public abstract class RubblemiteMixin extends LivingEntity {
     @Override
     public void onTrackedDataSet(TrackedData<?> data) {
         super.onTrackedDataSet(data);
-        if (data == RubblemiteVariant.DATA) {
+        if (data == DATA_VARIANT_ID) {
             var model = UniqueIdentifiableAttachment.get(this, BasePolymerEntity.MODEL);
             if (model != null && model.holder() instanceof SimpleEntityModel<?> entityModel) {
                 //noinspection unchecked
                 ((SimpleEntityModel<Rubblemite>) entityModel).setModel(
-                        (PolyModelInstance<EntityModel<Rubblemite>>) (Object) EntityModels.RUBBLEMITE.get(RubblemiteVariant.byId(this.getDataTracker().get(RubblemiteVariant.DATA)))
+                    (PolyModelInstance<EntityModel<Rubblemite>>) (Object) EntityModels.RUBBLEMITE.get(getVariant().getKey().get().getValue())
                 );
             }
         }

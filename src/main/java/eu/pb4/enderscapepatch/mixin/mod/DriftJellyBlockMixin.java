@@ -4,17 +4,14 @@ import eu.pb4.factorytools.api.block.model.generic.BlockStateModelManager;
 import net.bunten.enderscape.block.DriftJellyBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerPosition;
+import net.minecraft.entity.EntityPosition;
 import net.minecraft.network.packet.s2c.play.ParticleS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket;
 import net.minecraft.network.packet.s2c.play.PositionFlag;
-import net.minecraft.particle.BlockStateParticleEffect;
-import net.minecraft.particle.ItemStackParticleEffect;
-import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.BlockView;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -24,11 +21,14 @@ import java.util.Set;
 
 @Mixin(DriftJellyBlock.class)
 public class DriftJellyBlockMixin {
-    @Inject(method = "onSteppedOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;setVelocity(Lnet/minecraft/util/math/Vec3d;)V", shift = At.Shift.AFTER))
-    private void fixBounce(World level, BlockPos pos, BlockState state, Entity entity, CallbackInfo ci) {
+    @Inject(method = "onEntityLand", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;setVelocity(Lnet/minecraft/util/math/Vec3d;)V", shift = At.Shift.AFTER))
+    private void fixBounce(BlockView blockView, Entity entity, CallbackInfo ci) {
+        var level = entity.getEntityWorld();
+        BlockState state = entity.getSteppingBlockState();
+        BlockPos pos = entity.getSteppingPos();
         if (entity instanceof ServerPlayerEntity player) {
             player.networkHandler.sendPacket(new PlayerPositionLookS2CPacket(0,
-                    new PlayerPosition(Vec3d.ZERO, new Vec3d(0, entity.getVelocity().y, 0), 0, 0),
+                    new EntityPosition(Vec3d.ZERO, new Vec3d(0, entity.getVelocity().y, 0), 0, 0),
                     Set.of(PositionFlag.DELTA_X, PositionFlag.DELTA_Z, PositionFlag.X, PositionFlag.Y, PositionFlag.Z, PositionFlag.X_ROT, PositionFlag.Y_ROT)
             ));
 

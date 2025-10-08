@@ -3,7 +3,7 @@ package eu.pb4.enderscapepatch.mixin.mod;
 import eu.pb4.enderscapepatch.impl.EnderscapePolymerPatch;
 import eu.pb4.enderscapepatch.impl.block.*;
 import eu.pb4.enderscapepatch.mixin.AbstractOvergrowthBlockAccessor;
-import eu.pb4.enderscapepatch.mixin.DirectionPropertiesAccessor;
+import eu.pb4.enderscapepatch.mixin.DirectionSetAccessor;
 import eu.pb4.factorytools.api.block.model.SignModel;
 import eu.pb4.factorytools.api.block.model.generic.BlockStateModelManager;
 import eu.pb4.polymer.blocks.api.BlockModelType;
@@ -12,8 +12,6 @@ import eu.pb4.polymer.core.api.block.PolymerBlock;
 import eu.pb4.polymer.virtualentity.api.BlockWithElementHolder;
 import net.bunten.enderscape.Enderscape;
 import net.bunten.enderscape.block.*;
-import net.bunten.enderscape.block.properties.DirectionProperties;
-import net.bunten.enderscape.block.properties.Part;
 import net.bunten.enderscape.registry.EnderscapeBlocks;
 import net.minecraft.block.*;
 import net.minecraft.item.Item;
@@ -58,9 +56,9 @@ public class EnderscapeBlocksMixin {
             overlay = StatePolymerBlock.of(block, BlockModelType.VINES_BLOCK);
         } else if (block instanceof AbstractOvergrowthBlockAccessor block1) {
             overlay = StatePolymerBlock.of(block, BlockModelType.FULL_BLOCK, BaseFactoryBlock.BARRIER, x -> block1.getProperties().supports(x.get(AbstractOvergrowthBlock.FACING)));
-        } else if (block instanceof DirectionalPlantBlock block1 && ((DirectionPropertiesAccessor) (Object) block1.directionProperties).getList().size() == 1
-                && ((DirectionPropertiesAccessor) (Object) block1.directionProperties).getList().getFirst().getAxis() == Direction.Axis.Y) {
-            overlay = StatePolymerBlock.of(block, BlockModelType.TRIPWIRE_BLOCK_FLAT, BaseFactoryBlock.SAPLING, x -> block1.directionProperties.supports(x.get(DirectionalPlantBlock.FACING)));
+        } else if (block instanceof DirectionalPlantBlock block1 && ((DirectionSetAccessor) (Object) block1.directionSet).getList().size() == 1
+                && ((DirectionSetAccessor) (Object) block1.directionSet).getList().getFirst().getAxis() == Direction.Axis.Y) {
+            overlay = StatePolymerBlock.of(block, BlockModelType.TRIPWIRE_BLOCK_FLAT, BaseFactoryBlock.SAPLING, x -> block1.directionSet.supports(x.get(DirectionalPlantBlock.FACING)));
         } else if (block instanceof CorruptGrowthBlock) {
             overlay = StatePolymerBlock.of(block, BlockModelType.TRIPWIRE_BLOCK, BaseFactoryBlock.SAPLING,
                     x -> x.get(CorruptGrowthBlock.FACING).getAxis() == Direction.Axis.Y);

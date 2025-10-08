@@ -43,7 +43,7 @@ public class PacketHandler {
             player.setVelocity(new Vec3d(travel.x * hozPower * cosYRot - travel.z * hozPower * sinYRot, verPower, travel.z * hozPower * cosYRot + travel.x * hozPower * sinYRot));
             player.networkHandler.sendPacket(new EntityVelocityUpdateS2CPacket(player));
         } else if (payloadx instanceof ClientboundDashJumpSoundPayload payload) {
-            Entity entity = player.getWorld().getEntityById(payload.entityId());
+            Entity entity = player.getEntityWorld().getEntityById(payload.entityId());
             if (entity != null && entity.isAlive() && !entity.isSpectator()) {
                 var soundEvent = player.getRegistryManager().getOrThrow(RegistryKeys.SOUND_EVENT)
                         .getOrThrow(RegistryKey.of(RegistryKeys.SOUND_EVENT, payload.soundEvent()));
@@ -53,7 +53,7 @@ public class PacketHandler {
         } else if (payloadx instanceof ClientboundNebuliteOreSoundPayload payload) {
             BlockPos nebulite = payload.globalPos().pos();
             RegistryKey<World> dimension = payload.globalPos().dimension();
-            var level = player.getWorld();
+            var level = player.getEntityWorld();
             Entity entity = player.getCameraEntity();
             if (level != null && level.getRegistryKey() == dimension && entity instanceof LivingEntity mob) {
                 SoundEvent sound;

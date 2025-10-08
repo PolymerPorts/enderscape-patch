@@ -13,7 +13,7 @@ public class MagniaAttractorItemMixin {
     @Redirect(method = "tryCyclePower", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;playSound(Lnet/minecraft/sound/SoundEvent;FF)V"))
     private void playSoundActually(LivingEntity instance, SoundEvent soundEvent, float v, float p) {
         if (!instance.isSilent()) {
-            instance.getWorld().playSound((Entity)null, instance.getX(), instance.getY(), instance.getZ(), soundEvent, instance.getSoundCategory(), v, p);
+            instance.getEntityWorld().playSound((Entity)null, instance.getX(), instance.getY(), instance.getZ(), soundEvent, instance.getSoundCategory(), v, p);
         }
     }
 }
