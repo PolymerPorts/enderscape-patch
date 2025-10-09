@@ -24,6 +24,7 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.stat.Stats;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -44,6 +45,9 @@ public abstract class ReplacementItemEntityMixin extends Entity implements Magni
     private final ItemEntity entity = (ItemEntity) (Object) this;
     @Unique
     private static final TrackedData<Integer> MAGNIA_COOLDOWN_DATA;
+
+    @Unique
+    private Vec3d lastDir = new Vec3d(0, 0, 0);
 
     @Shadow
     public abstract ItemStack getStack();
@@ -97,6 +101,10 @@ public abstract class ReplacementItemEntityMixin extends Entity implements Magni
     )
     private void Enderscape$tick(CallbackInfo info) {
         MagniaMoveable.tickMagniaCooldown(this.entity);
+        var delta = entity.getVelocity();
+        if (delta.lengthSquared() > 1e-5) {
+            lastDir = delta.normalize();
+        }
     }
 
     @Inject(

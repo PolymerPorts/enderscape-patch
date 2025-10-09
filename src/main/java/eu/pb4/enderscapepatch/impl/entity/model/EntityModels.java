@@ -5,9 +5,11 @@ import eu.pb4.factorytools.api.virtualentity.emuvanilla.model.EntityModel;
 import eu.pb4.factorytools.api.virtualentity.emuvanilla.model.ModelPart;
 import eu.pb4.factorytools.api.virtualentity.emuvanilla.model.TexturedModelData;
 import net.bunten.enderscape.Enderscape;
+import net.bunten.enderscape.entity.rubblemite.RubblemiteVariant;
 import net.bunten.enderscape.registry.EnderscapeEntities;
 import net.bunten.enderscape.registry.EnderscapeRubblemiteVariants;
 import net.minecraft.entity.EntityType;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 
@@ -20,12 +22,11 @@ public interface EntityModels {
     PolyModelInstance<DrifterModel> DRIFTER_WITH_JELLY = withTexture(DRIFTER, Enderscape.id("entity/drifter/drifter_with_jelly"));
     PolyModelInstance<DriftletModel> DRIFTLET = create(DriftletModel::new, DriftletModel.createLayer(), Enderscape.id("entity/drifter/driftlet"));
 
-    Map<Identifier, PolyModelInstance<RubblemiteModel>> RUBBLEMITE = Util.make(new HashMap<>(), m -> {
+    Map<RegistryKey<RubblemiteVariant>, PolyModelInstance<RubblemiteModel>> RUBBLEMITE = Util.make(new HashMap<>(), m -> {
         var instance = create(RubblemiteModel::new, RubblemiteModel.createLayer(), EnderscapeRubblemiteVariants.DEFAULT.getValue().withPrefixedPath("entity/rubblemite/"));
-        m.put(EnderscapeRubblemiteVariants.END_STONE.getValue(), instance);
+        m.put(EnderscapeRubblemiteVariants.DEFAULT, instance);
         for (var variant : EnderscapeRubblemiteVariants.RUBBLEMITE_VARIANTS) {
-            if (variant == EnderscapeRubblemiteVariants.DEFAULT) continue;
-            m.put(variant.getValue(), withTexture(instance, variant.getValue().withPrefixedPath("entity/rubblemite/")));
+            m.put(variant, withTexture(instance, variant.getValue().withPrefixedPath("entity/rubblemite/")));
         }
     });
     PolyModelInstance<RustleModel> RUSTLE = create(RustleModel::new, RustleModel.createLayer(), Enderscape.id("entity/rustle/rustle"));
@@ -34,7 +35,7 @@ public interface EntityModels {
         var m = new IdentityHashMap<EntityType<?>, PolyModelInstance<?>>();
         m.put(EnderscapeEntities.DRIFTER, EntityModels.DRIFTER);
         m.put(EnderscapeEntities.DRIFTLET, EntityModels.DRIFTLET);
-        m.put(EnderscapeEntities.RUBBLEMITE, EntityModels.RUBBLEMITE.get(EnderscapeRubblemiteVariants.DEFAULT.getValue()));
+        m.put(EnderscapeEntities.RUBBLEMITE, EntityModels.RUBBLEMITE.get(EnderscapeRubblemiteVariants.DEFAULT));
         m.put(EnderscapeEntities.RUSTLE, EntityModels.RUSTLE);
         return m;
     });

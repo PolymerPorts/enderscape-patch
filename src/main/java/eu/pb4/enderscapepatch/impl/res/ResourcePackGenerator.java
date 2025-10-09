@@ -73,22 +73,18 @@ public class ResourcePackGenerator {
             e.printStackTrace();
         }
 
-        builder.forEachFile(((string, bytes) -> {
+        builder.forEachFile((string, bytes) -> {
             for (var expandable : EXPANDABLE) {
                 if (string.contains(expandable) && string.startsWith("assets/enderscape/models/block/")) {
                     var asset = ModelAsset.fromJson(new String(bytes, StandardCharsets.UTF_8));
                     if (asset.parent().isPresent()) {
                         var parentId = asset.parent().get();
                         var parentAsset = ModelAsset.fromJson(new String(Objects.requireNonNull(builder.getDataOrSource(AssetPaths.model(parentId) + ".json")), StandardCharsets.UTF_8));
-
-                        builder.addData(AssetPaths.model("enderscape-patch", parentId.getPath()) + ".json", new ModelAsset(parentAsset.parent(), parentAsset.elements().map(x -> x.stream()
-                                .map(element -> new ModelElement(element.from().subtract(expansion), element.to().add(expansion),
-                                        element.faces(), element.rotation(), element.shade(), element.lightEmission())
-                                ).toList()), parentAsset.textures(), parentAsset.display(), parentAsset.guiLight(), parentAsset.ambientOcclusion()).toBytes());
+                        builder.addData(AssetPaths.model("enderscape-patch", parentId.getPath()) + ".json", ModelModifiers.expandModel(parentAsset, expansion));
                     }
                 }
             }
-        }));
+        });
 
         for (var entry : BlockStateModelManager.UV_LOCKED_MODELS.get("enderscape").entrySet()) {
             var expand = EXPANDABLE.stream().anyMatch(expandable -> entry.getKey().contains(expandable) && entry.getKey().startsWith("block/")) ? expansion : Vec3d.ZERO;

@@ -7,17 +7,29 @@ import net.bunten.enderscape.network.ClientboundRubbleShieldCooldownSoundPayload
 import net.bunten.enderscape.registry.EnderscapeBlockSounds;
 import net.bunten.enderscape.registry.EnderscapeItemSounds;
 import net.bunten.enderscape.util.BlockUtil;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.passive.AnimalEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.network.packet.s2c.play.EntityVelocityUpdateS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlaySoundFromEntityS2CPacket;
 import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
+import net.minecraft.particle.BlockStateParticleEffect;
+import net.minecraft.particle.ItemStackParticleEffect;
+import net.minecraft.particle.ParticleEffect;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.PlayerInput;
@@ -124,5 +136,135 @@ public class PacketHandler {
         float g = Math.abs(vec.y);
         float h = g > f ? f / g : g / f;
         return MathHelper.sqrt(1.0F + MathHelper.square(h));
+    }
+
+    private static void addParticleClient(World world, ParticleEffect parameters, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
+        ((ServerWorld) world).spawnParticles(parameters, x, y, z, 0, velocityX, velocityY, velocityZ, 1);
+    }
+
+    private static void playEquipmentBreakEffects(LivingEntity entity, ItemStack stack) {
+        if (!stack.isEmpty()) {
+            RegistryEntry<SoundEvent> registryEntry = stack.get(DataComponentTypes.BREAK_SOUND);
+            if (registryEntry != null && !entity.isSilent()) {
+                entity.getEntityWorld().playSound(entity, entity.getX(), entity.getY(), entity.getZ(), registryEntry.value(), entity.getSoundCategory(), 0.8F, 0.8F + entity.getEntityWorld().getRandom().nextFloat() * 0.4F);
+            }
+
+            spawnItemParticles(entity, stack, 5);
+        }
+    }
+
+    public static boolean emulateHandleStatus(Entity entity, byte status) {
+        var world = entity.getEntityWorld();
+        if (entity instanceof AnimalEntity && status == 18) {
+            for (int i = 0; i < 7; ++i) {
+                double d = entity.getRandom().nextGaussian() * 0.02;
+                double e = entity.getRandom().nextGaussian() * 0.02;
+                double f = entity.getRandom().nextGaussian() * 0.02;
+                addParticleClient(world, ParticleTypes.HEART, entity.getParticleX(1.0), entity.getRandomBodyY() + 0.5, entity.getParticleZ(1.0), d, e, f);
+            }
+            return true;
+        }
+
+        if (entity instanceof MobEntity && status == 20) {
+            for (int i = 0; i < 20; ++i) {
+                double d = entity.getRandom().nextGaussian() * 0.02;
+                double e = entity.getRandom().nextGaussian() * 0.02;
+                double f = entity.getRandom().nextGaussian() * 0.02;
+                addParticleClient(world, ParticleTypes.POOF, entity.getParticleX(1.0) - d * 10.0, entity.getRandomBodyY() - e * 10.0, entity.getParticleZ(1.0) - f * 10.0, d, e, f);
+            }
+            return true;
+        }
+
+        if (entity instanceof LivingEntity livingEntity) {
+            switch (status) {
+                case 46:
+                    for (int j = 0; j < 128; ++j) {
+                        double d = (double) j / 127.0;
+                        float f = (livingEntity.getRandom().nextFloat() - 0.5F) * 0.2F;
+                        float g = (livingEntity.getRandom().nextFloat() - 0.5F) * 0.2F;
+                        float h = (livingEntity.getRandom().nextFloat() - 0.5F) * 0.2F;
+                        double e = MathHelper.lerp(d, livingEntity.lastX, livingEntity.getX()) + (livingEntity.getRandom().nextDouble() - 0.5) * (double) livingEntity.getWidth() * 2.0;
+                        double k = MathHelper.lerp(d, livingEntity.lastY, livingEntity.getY()) + livingEntity.getRandom().nextDouble() * (double) livingEntity.getHeight();
+                        double l = MathHelper.lerp(d, livingEntity.lastZ, livingEntity.getZ()) + (livingEntity.getRandom().nextDouble() - 0.5) * (double) livingEntity.getWidth() * 2.0;
+                        addParticleClient(world, ParticleTypes.PORTAL, e, k, l, f, g, h);
+                    }
+                    return true;
+                case 47:
+                    playEquipmentBreakEffects(livingEntity, livingEntity.getEquippedStack(EquipmentSlot.MAINHAND));
+                    return true;
+                case 48:
+                    playEquipmentBreakEffects(livingEntity, livingEntity.getEquippedStack(EquipmentSlot.OFFHAND));
+                    return true;
+                case 49:
+                    playEquipmentBreakEffects(livingEntity, livingEntity.getEquippedStack(EquipmentSlot.HEAD));
+                    return true;
+                case 50:
+                    playEquipmentBreakEffects(livingEntity, livingEntity.getEquippedStack(EquipmentSlot.CHEST));
+                    return true;
+                case 51:
+                    playEquipmentBreakEffects(livingEntity, livingEntity.getEquippedStack(EquipmentSlot.LEGS));
+                    return true;
+                case 52:
+                    playEquipmentBreakEffects(livingEntity, livingEntity.getEquippedStack(EquipmentSlot.FEET));
+                    return true;
+                case 54:
+                    BlockState blockState = Blocks.HONEY_BLOCK.getDefaultState();
+
+                    for (int i = 0; i < 10; ++i) {
+                        addParticleClient(world, new BlockStateParticleEffect(ParticleTypes.BLOCK, blockState), entity.getX(), entity.getY(), entity.getZ(), 0.0, 0.0, 0.0);
+                    }
+                    return true;
+                case 60:
+                    for (int i = 0; i < 20; ++i) {
+                        double d = entity.getRandom().nextGaussian() * 0.02;
+                        double e = entity.getRandom().nextGaussian() * 0.02;
+                        double f = entity.getRandom().nextGaussian() * 0.02;
+                        double g = 10.0;
+                        addParticleClient(world, ParticleTypes.POOF, entity.getParticleX(1.0) - d * 10.0, entity.getRandomBodyY() - e * 10.0, entity.getParticleZ(1.0) - f * 10.0, d, e, f);
+                    }
+                    return true;
+                case 65:
+                    playEquipmentBreakEffects(livingEntity, livingEntity.getEquippedStack(EquipmentSlot.BODY));
+                    return true;
+                case 67:
+                    Vec3d vec3d = entity.getVelocity();
+
+                    for (int i = 0; i < 8; ++i) {
+                        double d = entity.getRandom().nextTriangular(0.0, 1.0);
+                        double e = entity.getRandom().nextTriangular(0.0, 1.0);
+                        double f = entity.getRandom().nextTriangular(0.0, 1.0);
+                        addParticleClient(world, ParticleTypes.BUBBLE, entity.getX() + d, entity.getY() + e, entity.getZ() + f, vec3d.x, vec3d.y, vec3d.z);
+                    }
+                    return true;
+                case 68:
+                    playEquipmentBreakEffects(livingEntity, livingEntity.getEquippedStack(EquipmentSlot.SADDLE));
+                    return true;
+            }
+        }
+
+        if (status == 53) {
+            BlockState blockState = Blocks.HONEY_BLOCK.getDefaultState();
+
+            for (int i = 0; i < 5; ++i) {
+                addParticleClient(world, new BlockStateParticleEffect(ParticleTypes.BLOCK, blockState), entity.getX(), entity.getY(), entity.getZ(), 0.0, 0.0, 0.0);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private static void spawnItemParticles(LivingEntity entity, ItemStack stack, int count) {
+        for (int i = 0; i < count; ++i) {
+            Vec3d vec3d = new Vec3d(((double) entity.getRandom().nextFloat() - 0.5) * 0.1, Math.random() * 0.1 + 0.1, 0.0);
+            vec3d = vec3d.rotateX(-entity.getPitch() * 0.017453292F);
+            vec3d = vec3d.rotateY(-entity.getYaw() * 0.017453292F);
+            double d = (double) (-entity.getRandom().nextFloat()) * 0.6 - 0.3;
+            Vec3d vec3d2 = new Vec3d(((double) entity.getRandom().nextFloat() - 0.5) * 0.3, d, 0.6);
+            vec3d2 = vec3d2.rotateX(-entity.getPitch() * 0.017453292F);
+            vec3d2 = vec3d2.rotateY(-entity.getYaw() * 0.017453292F);
+            vec3d2 = vec3d2.add(entity.getX(), entity.getEyeY(), entity.getZ());
+            addParticleClient(entity.getEntityWorld(), new ItemStackParticleEffect(ParticleTypes.ITEM, stack), vec3d2.x, vec3d2.y, vec3d2.z, vec3d.x, vec3d.y + 0.05, vec3d.z);
+        }
+
     }
 }

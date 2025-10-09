@@ -1,11 +1,6 @@
 package eu.pb4.enderscapepatch.mixin;
 
 import com.bawnorton.mixinsquared.api.MixinCanceller;
-import net.fabricmc.fabric.impl.object.builder.FabricTrackedDataRegistryImpl;
-import net.minecraft.entity.data.TrackedDataHandler;
-import net.minecraft.registry.Registry;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Accessor;
 
 import java.util.List;
 

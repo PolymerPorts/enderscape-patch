@@ -1,5 +1,6 @@
 package eu.pb4.enderscapepatch.impl.entity;
 
+import eu.pb4.enderscapepatch.impl.PacketHandler;
 import eu.pb4.enderscapepatch.impl.entity.model.EntityModels;
 import eu.pb4.factorytools.api.virtualentity.emuvanilla.PolyModelInstance;
 import eu.pb4.factorytools.api.virtualentity.emuvanilla.model.EntityModel;
@@ -58,8 +59,8 @@ public record BasePolymerEntity(LivingEntity entity) implements PolymerEntity {
             return;
         }
 
-        if (packet instanceof EntityStatusS2CPacket packet1) {
-            this.entity.handleStatus(packet1.getStatus());
+        if (packet instanceof EntityStatusS2CPacket packet1 && PacketHandler.emulateHandleStatus(this.entity, packet1.getStatus())) {
+            return;
         }
 
         PolymerEntity.super.onEntityPacketSent(consumer, packet);

@@ -46,14 +46,6 @@ public abstract class ReplacementExperienceOrbMixin extends Entity implements Ma
             return true;
         }, (item) -> {
             this.orb.setNoGravity(true);
-            if (this.random.nextInt(16) == 0) {
-                World patt0$temp = this.getEntityWorld();
-                if (patt0$temp instanceof ServerWorld) {
-                    ServerWorld server = (ServerWorld)patt0$temp;
-                    server.spawnParticles(ParticleTypes.END_ROD, this.getEntityPos().x, this.getEntityPos().y + 0.5, this.getEntityPos().z, 1, 0.30000001192092896, 0.3, 0.30000001192092896, 0.0);
-                }
-            }
-
         }, (item) -> {
             item.setNoGravity(false);
         });
