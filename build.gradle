@@ -71,7 +71,7 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	modImplementation("maven.modrinth:enderscape:m3h6M75S") {
+	modImplementation("maven.modrinth:enderscape:TlPYO09j") {
 		exclude(group: "net.fabricmc")
 	}
 
