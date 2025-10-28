@@ -22,7 +22,7 @@ public abstract class LivingEntityMixin extends Entity {
         super(type, world);
     }
 
-    @ModifyExpressionValue(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;isClient()Z", ordinal = 1))
+    @ModifyExpressionValue(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;isClient()Z", ordinal = 2))
     private boolean serverWorldIsJustAsGoodAsClientOne(boolean original) {
        return original || PolymerEntity.get(this) instanceof BasePolymerEntity;
    }

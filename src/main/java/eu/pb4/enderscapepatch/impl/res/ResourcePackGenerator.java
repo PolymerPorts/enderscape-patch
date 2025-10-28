@@ -5,6 +5,7 @@ import eu.pb4.enderscapepatch.impl.entity.model.EntityModels;
 import eu.pb4.factorytools.api.block.model.generic.BlockStateModelManager;
 import eu.pb4.factorytools.api.resourcepack.ModelModifiers;
 import eu.pb4.polymer.resourcepack.api.AssetPaths;
+import eu.pb4.polymer.resourcepack.api.PackResource;
 import eu.pb4.polymer.resourcepack.api.PolymerResourcePackUtils;
 import eu.pb4.polymer.resourcepack.api.ResourcePackBuilder;
 import eu.pb4.polymer.resourcepack.extras.api.format.atlas.AtlasAsset;
@@ -73,10 +74,10 @@ public class ResourcePackGenerator {
             e.printStackTrace();
         }
 
-        builder.forEachFile((string, bytes) -> {
+        builder.forEachResource((string, resource) -> {
             for (var expandable : EXPANDABLE) {
                 if (string.contains(expandable) && string.startsWith("assets/enderscape/models/block/")) {
-                    var asset = ModelAsset.fromJson(new String(bytes, StandardCharsets.UTF_8));
+                    var asset = ModelAsset.fromJson(Objects.requireNonNull(resource.asString()));
                     if (asset.parent().isPresent()) {
                         var parentId = asset.parent().get();
                         var parentAsset = ModelAsset.fromJson(new String(Objects.requireNonNull(builder.getDataOrSource(AssetPaths.model(parentId) + ".json")), StandardCharsets.UTF_8));
@@ -105,18 +106,18 @@ public class ResourcePackGenerator {
             }
         }
 
-        builder.addWriteConverter(((string, bytes) -> {
+        builder.addResourceConverter(((string, resource) -> {
             if (!string.contains("_uvlock_")) {
                 for (var expandable : EXPANDABLE) {
                     if (string.contains(expandable) && string.startsWith("assets/enderscape/models/block/")) {
-                        var asset = ModelAsset.fromJson(new String(bytes, StandardCharsets.UTF_8));
-                        return new ModelAsset(asset.parent().map(x -> id(x.getPath())), asset.elements(), asset.textures(), asset.display(), asset.guiLight(), asset.ambientOcclusion()).toBytes();
+                        var asset = ModelAsset.fromJson(Objects.requireNonNull(resource.asString()));
+                        return PackResource.fromAsset(new ModelAsset(asset.parent().map(x -> id(x.getPath())), asset.elements(), asset.textures(), asset.display(), asset.guiLight(), asset.ambientOcclusion()));
                     }
                 }
             }
 
             if (string.equals("assets/enderscape/items/magnia_attractor.json")) {
-                var asset = ItemAsset.fromJson(new String(bytes, StandardCharsets.UTF_8));
+                var asset = ItemAsset.fromJson(Objects.requireNonNull(resource.asString()));
                 var replacer = new ItemModel.Replacer[]{null};
                 replacer[0] = (parent, model) -> {
                     if (model instanceof ConditionItemModel conditionItemModel && conditionItemModel.property() instanceof EnabledBooleanProperty) {
@@ -128,10 +129,10 @@ public class ResourcePackGenerator {
                     return model;
                 };
 
-                return new ItemAsset(replacer[0].modifyDeep(EmptyItemModel.INSTANCE, asset.model()), asset.properties()).toBytes();
+                return PackResource.fromAsset(new ItemAsset(replacer[0].modifyDeep(EmptyItemModel.INSTANCE, asset.model()), asset.properties()));
             }
 
-            return bytes;
+            return resource;
         }));
 
 

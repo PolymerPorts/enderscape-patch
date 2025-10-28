@@ -50,7 +50,9 @@ public class EnderscapeBlocksMixin {
             overlay = StatePolymerBlock.of(block, BlockModelType.TRANSPARENT_BLOCK);
         } else if (path.contains("_path")) {
             overlay = BaseFactoryBlock.BARRIER;
-        }else if (block instanceof VeiledVinesBlock) {
+        } else if (block instanceof ChorusCakeRollBlock) {
+            overlay = BaseFactoryBlock.CAMPFIRE;
+        } else if (block instanceof VeiledVinesBlock) {
             overlay = StatePolymerBlock.of(block, BlockModelType.VINES_BLOCK, BaseFactoryBlock.VINE, x -> x.get(VeiledVinesBlock.FACING) == Direction.UP);
         } else if (block instanceof FlangerBerryVine || block instanceof BlinklightVinesBodyBlock) {
             overlay = StatePolymerBlock.of(block, BlockModelType.VINES_BLOCK);
@@ -92,6 +94,10 @@ public class EnderscapeBlocksMixin {
             overlay = StateCopyFactoryBlock.HANGING_SIGN;
         } else if (block instanceof WallHangingSignBlock) {
             overlay = StateCopyFactoryBlock.HANGING_WALL_SIGN;
+        } else if (block instanceof ShelfBlock) {
+            overlay = ShelfFactoryBlock.INSTANCE;
+        } else if (block instanceof LanternBlock) {
+            overlay = LanternFactoryBlock.INSTANCE;
         } else if (block instanceof WispSproutsBlock) {
             overlay = RealSingleStatePolymerBlock.of(block, BlockModelType.TRIPWIRE_BLOCK);
         } else if (block instanceof VeiledLeavesBlock) {
