@@ -12,6 +12,7 @@ public class EnderscapePolymerPatchMixinCanceller implements MixinCanceller {
                 || mixinClassName.equals("net.bunten.enderscape.mixin.ItemEntityMixin")
                 || mixinClassName.equals("net.bunten.enderscape.mixin.ExperienceOrbMixin")
                 || mixinClassName.equals("net.bunten.enderscape.mixin.AbstractMinecartMixin")
+                || mixinClassName.equals("net.bunten.enderscape.client.mixin.MusicManagerMixin")
                 ;
     }
 }

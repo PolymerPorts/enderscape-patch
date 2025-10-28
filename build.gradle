@@ -71,11 +71,9 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-//	modImplementation("maven.modrinth:enderscape:ci0Q33gr") {
-//		exclude(group: "net.fabricmc")
-//	}
-	modImplementation files("libs/enderscape-fabric-1.1.1+mc1.21.10.jar")
-
+	modImplementation("maven.modrinth:enderscape:zgU3W5P9") {
+		exclude(group: "net.fabricmc")
+	}
 
 	modImplementation 'com.github.ramixin:mixson-fabric:1.4.0'
 	modImplementation "dev.isxander:yet-another-config-lib:3.8.0+1.21.9-fabric"
