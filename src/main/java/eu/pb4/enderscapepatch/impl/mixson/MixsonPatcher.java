@@ -15,8 +15,8 @@ import java.util.*;
 
 public class MixsonPatcher {
     private static final PackResourceMetadata METADATA = new PackResourceMetadata(Text.translatable("resourcePack.vanilla.description"),
-            SharedConstants.getGameVersion().packVersion(ResourceType.CLIENT_RESOURCES), Optional.empty());
-    private static final ResourceMetadataMap METADATA_MAP = ResourceMetadataMap.of(PackResourceMetadata.SERIALIZER, METADATA);
+        SharedConstants.getGameVersion().packVersion(ResourceType.CLIENT_RESOURCES).majorRange());
+    private static final ResourceMetadataMap METADATA_MAP = ResourceMetadataMap.of(PackResourceMetadata.CLIENT_RESOURCES_SERIALIZER, METADATA);
 
     private static final ResourcePackInfo INFO = new ResourcePackInfo("vanilla", Text.translatable("resourcePack.vanilla.name"), ResourcePackSource.BUILTIN, Optional.of(VersionedIdentifier.createVanilla("resourcepacks")));
 

@@ -21,7 +21,7 @@ public record MagniaAttractorPolyItem() implements PolymerItem {
     @Override
     public void modifyBasePolymerItemStack(ItemStack out, ItemStack stack, PacketContext context) {
         out.set(DataComponentTypes.CUSTOM_MODEL_DATA, new CustomModelDataComponent(List.of(), List.of(EnabledBooleanProperty.test(stack,
-                context.getPlayer() != null ? context.getPlayer().getWorld() : null, context.getPlayer())), List.of(), List.of()));
+                context.getPlayer() != null ? context.getPlayer().getEntityWorld() : null, context.getPlayer())), List.of(), List.of()));
 
         out.set(DataComponentTypes.MAX_DAMAGE, 13);
         out.set(DataComponentTypes.DAMAGE, 13 - stack.getItemBarStep());

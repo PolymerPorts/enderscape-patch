@@ -5,7 +5,7 @@ import net.bunten.enderscape.block.DriftJellyBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerPosition;
+import net.minecraft.entity.EntityPosition;
 import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket;
 import net.minecraft.network.packet.s2c.play.PositionFlag;
 import net.minecraft.particle.BlockStateParticleEffect;
@@ -36,7 +36,7 @@ public abstract class DriftJellyBlockMixin {
     private void fixBounce(BlockView level, Entity entity, CallbackInfo ci) {
         if (entity instanceof ServerPlayerEntity player) {
             player.networkHandler.sendPacket(new PlayerPositionLookS2CPacket(0,
-                    new PlayerPosition(Vec3d.ZERO, new Vec3d(0, entity.getVelocity().y, 0), 0, 0),
+                    new EntityPosition(Vec3d.ZERO, new Vec3d(0, entity.getVelocity().y, 0), 0, 0),
                     Set.of(PositionFlag.DELTA_X, PositionFlag.DELTA_Z, PositionFlag.X, PositionFlag.Y, PositionFlag.Z, PositionFlag.X_ROT, PositionFlag.Y_ROT)
             ));
         }

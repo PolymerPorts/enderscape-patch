@@ -27,6 +27,7 @@
     "mod.EnderscapeMobEffectsMixin",
     "mod.EnderscapeNoteBlockInstrumentsMixin",
     "mod.EnderscapeParticlesMixin",
+    "mod.EnderscapePoiMixin",
     "mod.EnderscapePotionsMixin",
     "mod.EnderscapeRegistriesMixin",
     "mod.EnderscapeStatsMixin",

@@ -55,7 +55,7 @@ public class PacketHandler {
             player.setVelocity(new Vec3d(travel.x * hozPower * cosYRot - travel.z * hozPower * sinYRot, verPower, travel.z * hozPower * cosYRot + travel.x * hozPower * sinYRot));
             player.networkHandler.sendPacket(new EntityVelocityUpdateS2CPacket(player));
         } else if (payloadx instanceof ClientboundDashJumpSoundPayload payload) {
-            Entity entity = player.getWorld().getEntityById(payload.entityId());
+            Entity entity = player.getEntityWorld().getEntityById(payload.entityId());
             if (entity != null && entity.isAlive() && !entity.isSpectator()) {
                 var soundEvent = player.getRegistryManager().getOrThrow(RegistryKeys.SOUND_EVENT)
                         .getOrThrow(RegistryKey.of(RegistryKeys.SOUND_EVENT, payload.soundEvent()));
@@ -65,7 +65,7 @@ public class PacketHandler {
         } else if (payloadx instanceof ClientboundNebuliteOreSoundPayload payload) {
             BlockPos nebulite = payload.globalPos().pos();
             RegistryKey<World> dimension = payload.globalPos().dimension();
-            var level = player.getWorld();
+            var level = player.getEntityWorld();
             Entity entity = player.getCameraEntity();
             if (level != null && level.getRegistryKey() == dimension && entity instanceof LivingEntity mob) {
                 SoundEvent sound;
@@ -146,7 +146,7 @@ public class PacketHandler {
         if (!stack.isEmpty()) {
             RegistryEntry<SoundEvent> registryEntry = stack.get(DataComponentTypes.BREAK_SOUND);
             if (registryEntry != null && !entity.isSilent()) {
-                entity.getWorld().playSound(entity, entity.getX(), entity.getY(), entity.getZ(), registryEntry.value(), entity.getSoundCategory(), 0.8F, 0.8F + entity.getWorld().getRandom().nextFloat() * 0.4F);
+                entity.getEntityWorld().playSound(entity, entity.getX(), entity.getY(), entity.getZ(), registryEntry.value(), entity.getSoundCategory(), 0.8F, 0.8F + entity.getEntityWorld().getRandom().nextFloat() * 0.4F);
             }
 
             spawnItemParticles(entity, stack, 5);
@@ -154,7 +154,7 @@ public class PacketHandler {
     }
 
     public static boolean emulateHandleStatus(Entity entity, byte status) {
-        var world = entity.getWorld();
+        var world = entity.getEntityWorld();
         if (entity instanceof AnimalEntity && status == 18) {
             for (int i = 0; i < 7; ++i) {
                 double d = entity.getRandom().nextGaussian() * 0.02;
@@ -263,7 +263,7 @@ public class PacketHandler {
             vec3d2 = vec3d2.rotateX(-entity.getPitch() * 0.017453292F);
             vec3d2 = vec3d2.rotateY(-entity.getYaw() * 0.017453292F);
             vec3d2 = vec3d2.add(entity.getX(), entity.getEyeY(), entity.getZ());
-            addParticleClient(entity.getWorld(), new ItemStackParticleEffect(ParticleTypes.ITEM, stack), vec3d2.x, vec3d2.y, vec3d2.z, vec3d.x, vec3d.y + 0.05, vec3d.z);
+            addParticleClient(entity.getEntityWorld(), new ItemStackParticleEffect(ParticleTypes.ITEM, stack), vec3d2.x, vec3d2.y, vec3d2.z, vec3d.x, vec3d.y + 0.05, vec3d.z);
         }
 
     }

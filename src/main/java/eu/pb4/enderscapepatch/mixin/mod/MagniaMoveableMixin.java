@@ -18,7 +18,7 @@ public interface MagniaMoveableMixin {
     static void sendEntityEffectParticles(ServerWorld level, Entity entity, MagniaParticleOptions options, float chance) {
         if (level != null && entity != null && entity.isAlive() && (entity.getVelocity().lengthSquared() > 0.02 || entity.getRandom().nextInt(12) == 0)) {
             Box box = entity.getBoundingBox();
-            Vec3d pos = entity.getPos().add(0.0, box.getLengthY() / (double)(entity instanceof ItemEntity ? 0.5F : 2.0F), 0.0);
+            Vec3d pos = entity.getEntityPos().add(0.0, box.getLengthY() / (double)(entity instanceof ItemEntity ? 0.5F : 2.0F), 0.0);
             if (level.random.nextFloat() <= chance) {
                 level.spawnParticles(new DustColorTransitionParticleEffect(options.color(), options.fadeColor(), options.colorFadeRate() * 4), pos.x, pos.y, pos.z, 1, box.getLengthX() * 0.6, box.getLengthY() * 0.6, box.getLengthZ() * 0.6, 1.0);
             }
