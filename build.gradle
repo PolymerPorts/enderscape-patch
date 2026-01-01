@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.11.+'
+	id 'fabric-loom' version '1.14.+'
 	id 'maven-publish'
 	id "com.modrinth.minotaur" version "2.+"
 }
@@ -71,23 +71,23 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	modImplementation("maven.modrinth:enderscape:ELcG9H7k") {
+	modImplementation("maven.modrinth:enderscape:xpAgFybl") {
 		exclude(group: "net.fabricmc")
 	}
 
 	modImplementation 'com.github.ramixin:mixson-fabric:1.4.0'
-	modImplementation "dev.isxander:yet-another-config-lib:3.8.0+1.21.9-fabric"
-	modImplementation "maven.modrinth:lithostitched:1.5.2-fabric-1.21.9"
+	modImplementation "dev.isxander:yet-another-config-lib:3.8.1+1.21.11-fabric"
+	modImplementation "maven.modrinth:lithostitched:1.5.7-fabric-1.21.11"
 
 
-	modImplementation include('eu.pb4:factorytools:0.8.2+1.21.10')
-	modImplementation 'eu.pb4:polymer-core:0.14.3+1.21.10'
-	modImplementation ('eu.pb4:polymer-blocks:0.14.3+1.21.10')
-	modImplementation 'eu.pb4:polymer-resource-pack:0.14.3+1.21.10'
-	modImplementation ('eu.pb4:polymer-sound-patcher:0.14.3+1.21.10')
-	modImplementation 'eu.pb4:polymer-resource-pack-extras:0.14.3+1.21.10'
-	modImplementation ('eu.pb4:polymer-autohost:0.14.3+1.21.10')
-	modImplementation 'eu.pb4:polymer-virtual-entity:0.14.3+1.21.10'
+	modImplementation include('eu.pb4:factorytools:0.9.2+1.21.11')
+	modImplementation 'eu.pb4:polymer-core:0.15.1+1.21.11'
+	modImplementation ('eu.pb4:polymer-blocks:0.15.1+1.21.11')
+	modImplementation 'eu.pb4:polymer-resource-pack:0.15.1+1.21.11'
+	modImplementation ('eu.pb4:polymer-sound-patcher:0.15.1+1.21.11')
+	modImplementation 'eu.pb4:polymer-resource-pack-extras:0.15.1+1.21.11'
+	modImplementation ('eu.pb4:polymer-autohost:0.15.1+1.21.11')
+	modImplementation 'eu.pb4:polymer-virtual-entity:0.15.1+1.21.11'
 
 
 	include(implementation(annotationProcessor("com.github.bawnorton.mixinsquared:mixinsquared-fabric:0.3.3")))

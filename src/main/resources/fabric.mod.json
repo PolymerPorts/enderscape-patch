@@ -26,9 +26,9 @@
 		"enderscape-polymer-patch.mixins.json"
 	],
 	"depends": {
-		"fabricloader": ">=0.16.4",
+		"fabricloader": ">=0.18.2",
 		"enderscape": ">=2.0.0",
-		"minecraft": "1.21.10",
+		"minecraft": ">=1.21.11 <26.0 ",
 		"java": ">=21",
 		"fabric-api": "*"
 	}
