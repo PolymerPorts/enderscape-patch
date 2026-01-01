@@ -42,7 +42,6 @@ public class EnderscapePolymerPatch implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        MixinEnvironment.getCurrentEnvironment().audit();
         PolymerResourcePackUtils.addModAssets("enderscape");
         PolymerResourcePackUtils.addModAssets(MOD_ID);
         ResourcePackExtras.forDefault().addBridgedModelsFolder(

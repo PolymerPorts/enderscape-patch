@@ -43,8 +43,7 @@ public class EnderscapeBlocksMixin {
 
     @Unique
     private static void polymerify(String path, Block block) {
-        EnderscapePolymerPatch.LATE_INIT.add(() -> BlockStateModelManager.addBlock(BuiltInRegistries.BLOCK.getKey(block), block));
-
+        boolean solid = true;
         PolymerBlock overlay = null;
 
         if (path.endsWith("nebulite_ore") || path.equals("void_shale")) {
@@ -75,6 +74,8 @@ public class EnderscapeBlocksMixin {
             overlay = StatePolymerBlock.of(block, BlockModelType.TRIPWIRE_BLOCK, BaseFactoryBlock.SAPLING, x -> x.getValue(VeiledLeafPileBlock.LAYERS) < 3);
         } else if (block instanceof MurublightShelfBlock) {
             overlay = BaseFactoryBlock.SAPLING_SHORT;
+        } else if (block instanceof MagniaSproutBlock) {
+            overlay = WaterloggedFactoryBlock.BARRIER;
         } else if (block instanceof SlabBlock) {
             overlay = SlabFactoryBlock.INSTANCE;
         } else if (block instanceof StairBlock) {
@@ -111,10 +112,13 @@ public class EnderscapeBlocksMixin {
             overlay = RealSingleStatePolymerBlock.of(block, BlockModelType.TRANSPARENT_BLOCK);
         } else if (!(block instanceof EntityBlock) && !path.equals("drift_jelly_block") && block.defaultBlockState().isCollisionShapeFullBlock(PolymerCommonUtils.getFakeWorld(), BlockPos.ZERO)) {
             overlay = StatePolymerBlock.of(block, BlockModelType.FULL_BLOCK);
+        } else if (block instanceof DriftJellyBlock) {
+            solid = false;
         }
 
+
         if (block instanceof SignBlock) {
-            EnderscapePolymerPatch.LATE_INIT.add(() -> SignModel.setModel(block, Enderscape.id("block_sign/" + path)));
+            EnderscapePolymerPatch.LATE_INIT.add(() -> SignModel.setSolidModel(block, Enderscape.id("block_sign/" + path)));
         }
 
         if (overlay == null) {
@@ -126,6 +130,11 @@ public class EnderscapeBlocksMixin {
         }
 
 
+        if (solid) {
+            EnderscapePolymerPatch.LATE_INIT.add(() -> BlockStateModelManager.addSolidBlock(BuiltInRegistries.BLOCK.getKey(block), block));
+        } else {
+            EnderscapePolymerPatch.LATE_INIT.add(() -> BlockStateModelManager.addTransparentBlock(BuiltInRegistries.BLOCK.getKey(block), block));
+        }
         PolymerBlock.registerOverlay(block, overlay);
         if (overlay instanceof BlockWithElementHolder blockWithElementHolder) {
             BlockWithElementHolder.registerOverlay(block, blockWithElementHolder);

@@ -80,7 +80,7 @@ dependencies {
 	modImplementation "maven.modrinth:lithostitched:1.5.7-fabric-1.21.11"
 
 
-	modImplementation include('eu.pb4:factorytools:0.9.2+1.21.11')
+	modImplementation include('eu.pb4:factorytools:0.9.3+1.21.11')
 	modImplementation 'eu.pb4:polymer-core:0.15.1+1.21.11'
 	modImplementation ('eu.pb4:polymer-blocks:0.15.1+1.21.11')
 	modImplementation 'eu.pb4:polymer-resource-pack:0.15.1+1.21.11'

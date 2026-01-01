@@ -137,6 +137,6 @@ public class ResourcePackGenerator {
         ModelModifiers.createSignModel(builder, "enderscape","celestial", atlas);
         ModelModifiers.createSignModel(builder, "enderscape","murublight", atlas);
 
-        builder.addData("assets/minecraft/atlases/blocks.json", atlas.build());
+        builder.addData("assets/minecraft/atlases/items.json", atlas.build());
     }
 }
