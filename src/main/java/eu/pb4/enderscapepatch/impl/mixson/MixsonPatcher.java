@@ -3,33 +3,37 @@ package eu.pb4.enderscapepatch.impl.mixson;
 import eu.pb4.polymer.common.api.PolymerCommonUtils;
 import eu.pb4.polymer.resourcepack.api.PolymerResourcePackUtils;
 import net.minecraft.SharedConstants;
-import net.minecraft.registry.VersionedIdentifier;
-import net.minecraft.resource.*;
-import net.minecraft.resource.metadata.PackResourceMetadata;
-import net.minecraft.resource.metadata.ResourceMetadataMap;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.packs.BuiltInMetadata;
+import net.minecraft.server.packs.PackLocationInfo;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.VanillaPackResourcesBuilder;
+import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
+import net.minecraft.server.packs.repository.KnownPack;
+import net.minecraft.server.packs.repository.PackSource;
 import net.ramixin.mixson.inline.Mixson;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Optional;
 
 public class MixsonPatcher {
-    private static final PackResourceMetadata METADATA = new PackResourceMetadata(Text.translatable("resourcePack.vanilla.description"),
-        SharedConstants.getGameVersion().packVersion(ResourceType.CLIENT_RESOURCES).majorRange());
-    private static final ResourceMetadataMap METADATA_MAP = ResourceMetadataMap.of(PackResourceMetadata.CLIENT_RESOURCES_SERIALIZER, METADATA);
+    private static final PackMetadataSection METADATA = new PackMetadataSection(Component.translatable("resourcePack.vanilla.description"),
+            SharedConstants.getCurrentVersion().packVersion(PackType.CLIENT_RESOURCES).minorRange());
+    private static final BuiltInMetadata METADATA_MAP = BuiltInMetadata.of(PackMetadataSection.CLIENT_TYPE, METADATA);
 
-    private static final ResourcePackInfo INFO = new ResourcePackInfo("vanilla", Text.translatable("resourcePack.vanilla.name"), ResourcePackSource.BUILTIN, Optional.of(VersionedIdentifier.createVanilla("resourcepacks")));
+    private static final PackLocationInfo INFO = new PackLocationInfo("vanilla", Component.translatable("resourcePack.vanilla.name"), PackSource.BUILT_IN, Optional.of(KnownPack.vanilla("resourcepacks")));
 
 
     public static void setup() {
         PolymerResourcePackUtils.RESOURCE_PACK_CREATION_EVENT.register(builder -> {
-            var pack = new DefaultResourcePackBuilder().withMetadataMap(METADATA_MAP).withNamespaces("minecraft", "realms").withRoot(PolymerCommonUtils.getClientJarRoot()).build(INFO);
+            var pack = new VanillaPackResourcesBuilder().setMetadata(METADATA_MAP).exposeNamespace("minecraft", "realms").pushUniversalPath(PolymerCommonUtils.getClientJarRoot()).build(INFO);
 
-            var mut = new MutablePackMap(pack, ResourceType.CLIENT_RESOURCES, new HashMap<>());
+            var mut = new MutablePackMap(pack, PackType.CLIENT_RESOURCES, new HashMap<>());
             Mixson.runStandardEvents(mut);
             mut.overrides().forEach((id, res) -> {
                 try {
-                    builder.addData("assets/" + id.getNamespace() + "/" + id.getPath(), res.getInputStream().readAllBytes());
+                    builder.addData("assets/" + id.getNamespace() + "/" + id.getPath(), res.open().readAllBytes());
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }

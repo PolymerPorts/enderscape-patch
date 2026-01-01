@@ -5,15 +5,15 @@ import eu.pb4.polymer.resourcepack.extras.api.format.item.property.bool.BooleanP
 import net.bunten.enderscape.item.ItemStackContext;
 import net.bunten.enderscape.item.component.Enabled;
 import net.bunten.enderscape.item.component.FueledTool;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 public record EnabledBooleanProperty() implements BooleanProperty {
     public static final MapCodec<EnabledBooleanProperty> MAP_CODEC = MapCodec.unit(new EnabledBooleanProperty());
 
-    public static boolean test(ItemStack stack, @Nullable World level, @Nullable LivingEntity living) {
+    public static boolean test(ItemStack stack, @Nullable Level level, @Nullable LivingEntity living) {
         return Enabled.get(stack) && FueledTool.fuelExceedsCost(new ItemStackContext(stack, level, living));
     }
 

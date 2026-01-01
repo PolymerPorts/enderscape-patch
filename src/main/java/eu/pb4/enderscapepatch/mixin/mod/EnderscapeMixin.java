@@ -3,8 +3,8 @@ package eu.pb4.enderscapepatch.mixin.mod;
 import eu.pb4.enderscapepatch.impl.EnderscapePolymerPatch;
 import eu.pb4.polymer.core.api.other.PolymerSoundEvent;
 import net.bunten.enderscape.Enderscape;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.sound.SoundEvent;
+import net.minecraft.core.Holder;
+import net.minecraft.sounds.SoundEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -19,7 +19,7 @@ public class EnderscapeMixin {
     }
 
     @Inject(method = "registerSoundEventHolder", at = @At("TAIL"))
-    private static void polymerifySound2(String name, CallbackInfoReturnable<RegistryEntry<SoundEvent>> cir) {
+    private static void polymerifySound2(String name, CallbackInfoReturnable<Holder<SoundEvent>> cir) {
         PolymerSoundEvent.registerOverlay(cir.getReturnValue().value());
     }
 

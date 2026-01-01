@@ -8,11 +8,10 @@ import net.bunten.enderscape.Enderscape;
 import net.bunten.enderscape.entity.rubblemite.RubblemiteVariant;
 import net.bunten.enderscape.registry.EnderscapeEntities;
 import net.bunten.enderscape.registry.EnderscapeRubblemiteVariants;
-import net.minecraft.entity.EntityType;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.Util;
-
+import net.minecraft.world.entity.EntityType;
 import java.util.*;
 import java.util.function.Function;
 
@@ -22,11 +21,11 @@ public interface EntityModels {
     PolyModelInstance<DrifterModel> DRIFTER_WITH_JELLY = withTexture(DRIFTER, Enderscape.id("entity/drifter/drifter_with_jelly"));
     PolyModelInstance<DriftletModel> DRIFTLET = create(DriftletModel::new, DriftletModel.createLayer(), Enderscape.id("entity/drifter/driftlet"));
 
-    Map<RegistryKey<RubblemiteVariant>, PolyModelInstance<RubblemiteModel>> RUBBLEMITE = Util.make(new HashMap<>(), m -> {
-        var instance = create(RubblemiteModel::new, RubblemiteModel.createLayer(), EnderscapeRubblemiteVariants.DEFAULT.getValue().withPrefixedPath("entity/rubblemite/"));
+    Map<ResourceKey<RubblemiteVariant>, PolyModelInstance<RubblemiteModel>> RUBBLEMITE = Util.make(new HashMap<>(), m -> {
+        var instance = create(RubblemiteModel::new, RubblemiteModel.createLayer(), EnderscapeRubblemiteVariants.DEFAULT.identifier().withPrefix("entity/rubblemite/"));
         m.put(EnderscapeRubblemiteVariants.DEFAULT, instance);
         for (var variant : EnderscapeRubblemiteVariants.RUBBLEMITE_VARIANTS) {
-            m.put(variant, withTexture(instance, variant.getValue().withPrefixedPath("entity/rubblemite/")));
+            m.put(variant, withTexture(instance, variant.identifier().withPrefix("entity/rubblemite/")));
         }
     });
     PolyModelInstance<RustleModel> RUSTLE = create(RustleModel::new, RustleModel.createLayer(), Enderscape.id("entity/rustle/rustle"));

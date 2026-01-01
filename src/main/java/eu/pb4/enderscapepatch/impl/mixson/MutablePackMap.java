@@ -1,17 +1,17 @@
 package eu.pb4.enderscapepatch.impl.mixson;
 
 import eu.pb4.polymer.common.api.PolymerCommonUtils;
-import net.minecraft.resource.DirectoryResourcePack;
-import net.minecraft.resource.Resource;
-import net.minecraft.resource.ResourcePack;
-import net.minecraft.resource.ResourceType;
-import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.packs.PackResources;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.PathPackResources;
+import net.minecraft.server.packs.resources.Resource;
 
-public record MutablePackMap(ResourcePack pack, ResourceType type, Map<Identifier, Resource> overrides) implements Map<Identifier, Resource> {
+public record MutablePackMap(PackResources pack, PackType type, Map<Identifier, Resource> overrides) implements Map<Identifier, Resource> {
     @Override
     public int size() {
         return 0;
@@ -24,7 +24,7 @@ public record MutablePackMap(ResourcePack pack, ResourceType type, Map<Identifie
 
     @Override
     public boolean containsKey(Object key) {
-        return key instanceof Identifier identifier && this.pack.open(type, identifier) != null || this.overrides.containsKey(key);
+        return key instanceof Identifier identifier && this.pack.getResource(type, identifier) != null || this.overrides.containsKey(key);
     }
 
     @Override
@@ -37,7 +37,7 @@ public record MutablePackMap(ResourcePack pack, ResourceType type, Map<Identifie
         if (this.overrides.containsKey(key)) return this.overrides.get(key);
 
         if (key instanceof Identifier identifier) {
-            return new Resource(this.pack, this.pack.open(ResourceType.CLIENT_RESOURCES, identifier));
+            return new Resource(this.pack, this.pack.getResource(PackType.CLIENT_RESOURCES, identifier));
         }
         return null;
     }
@@ -74,9 +74,9 @@ public record MutablePackMap(ResourcePack pack, ResourceType type, Map<Identifie
         return set;
     }
 
-    private void findResources(ResourceType type, String namespace, ResourcePack.ResultConsumer consumer) {
+    private void findResources(PackType type, String namespace, PackResources.ResourceOutput consumer) {
         var root = PolymerCommonUtils.getClientJarRoot().resolve(type.getDirectory()).resolve(namespace);
-        DirectoryResourcePack.findResources(namespace, root, List.of(), consumer);
+        PathPackResources.listPath(namespace, root, List.of(), consumer);
     }
 
     @NotNull

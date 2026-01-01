@@ -8,17 +8,16 @@ import eu.pb4.polymer.blocks.api.BlockModelType;
 import eu.pb4.polymer.blocks.api.PolymerBlockResourceUtils;
 import eu.pb4.polymer.blocks.api.PolymerTexturedBlock;
 import eu.pb4.polymer.virtualentity.api.ElementHolder;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.ShelfBlock;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Hand;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Util;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.ShelfBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 import xyz.nucleoid.packettweaker.PacketContext;
 
@@ -30,29 +29,29 @@ public record ShelfFactoryBlock(boolean tick, BiFunction<BlockState, BlockPos, B
 
     private static final EnumMap<Direction, BlockState> SHELVES = Util.make(new EnumMap<>(Direction.class),
             x -> {
-        for (var dir : Direction.Type.HORIZONTAL) {
+        for (var dir : Direction.Plane.HORIZONTAL) {
             x.put(dir, PolymerBlockResourceUtils.requestEmpty(BlockModelType.getShelf(dir, false)));
         }
             });
     private static final EnumMap<Direction, BlockState> SHELVES_WATERLOGGED = Util.make(new EnumMap<>(Direction.class),
             x -> {
-                for (var dir : Direction.Type.HORIZONTAL) {
+                for (var dir : Direction.Plane.HORIZONTAL) {
                     x.put(dir, PolymerBlockResourceUtils.requestEmpty(BlockModelType.getShelf(dir, true)));
                 }
             });
 
     @Override
     public BlockState getPolymerBlockState(BlockState state, PacketContext context) {
-        return (state.get(ShelfBlock.WATERLOGGED) ? SHELVES_WATERLOGGED : SHELVES).get(state.get(ShelfBlock.FACING));
+        return (state.getValue(ShelfBlock.WATERLOGGED) ? SHELVES_WATERLOGGED : SHELVES).get(state.getValue(ShelfBlock.FACING));
     }
 
     @Override
-    public @Nullable ElementHolder createElementHolder(ServerWorld world, BlockPos pos, BlockState initialBlockState) {
+    public @Nullable ElementHolder createElementHolder(ServerLevel world, BlockPos pos, BlockState initialBlockState) {
         return this.modelFunction.apply(initialBlockState, pos);
     }
 
     @Override
-    public boolean tickElementHolder(ServerWorld world, BlockPos pos, BlockState initialBlockState) {
+    public boolean tickElementHolder(ServerLevel world, BlockPos pos, BlockState initialBlockState) {
         return this.tick;
     }
 
@@ -65,7 +64,7 @@ public record ShelfFactoryBlock(boolean tick, BiFunction<BlockState, BlockPos, B
     }
 
     @Override
-    public boolean isIgnoringBlockInteractionPlaySoundExceptedEntity(BlockState state, ServerPlayerEntity player, Hand hand, ItemStack stack, ServerWorld world, BlockHitResult blockHitResult) {
+    public boolean isIgnoringBlockInteractionPlaySoundExceptedEntity(BlockState state, ServerPlayer player, InteractionHand hand, ItemStack stack, ServerLevel world, BlockHitResult blockHitResult) {
         return true;
     }
 }

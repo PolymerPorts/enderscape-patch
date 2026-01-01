@@ -2,9 +2,8 @@ package eu.pb4.enderscapepatch.impl.entity.model;
 
 import eu.pb4.factorytools.api.virtualentity.emuvanilla.EntityValueExtraction;
 import eu.pb4.factorytools.api.virtualentity.emuvanilla.model.*;
-import eu.pb4.factorytools.api.virtualentity.emuvanilla.model.Dilation;
 import net.bunten.enderscape.entity.drifter.Drifter;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
 
 
 public class DrifterModel extends EntityModel<Drifter> {
@@ -53,30 +52,30 @@ public class DrifterModel extends EntityModel<Drifter> {
     public void setAngles(Drifter state) {
         super.setAngles(state);
 
-        float age = state.age;
-        float animPos = state.limbAnimator.getAnimationProgress(1);
-        float animSpeed = state.limbAnimator.getAmplitude(1);
+        float age = state.tickCount;
+        float animPos = state.walkAnimation.position(1);
+        float animSpeed = state.walkAnimation.speed(1);
         this.head.yaw = EntityValueExtraction.getRelativeHeadYaw(state) * 0.017453292F;
-        this.head.pitch = state.getPitch() * 0.017453292F + MathHelper.sin(age * 0.2F) * 0.1F;
-        this.head.roll = 0.1F * MathHelper.sin(animPos * 0.8F) * 2.0F * animSpeed * 0.25F;
+        this.head.pitch = state.getXRot() * 0.017453292F + Mth.sin(age * 0.2F) * 0.1F;
+        this.head.roll = 0.1F * Mth.sin(animPos * 0.8F) * 2.0F * animSpeed * 0.25F;
         ModelPart var10000 = this.head;
-        var10000.pitch += 0.1F * MathHelper.sin(animPos * 0.8F) * 4.0F * animSpeed * 0.25F;
+        var10000.pitch += 0.1F * Mth.sin(animPos * 0.8F) * 4.0F * animSpeed * 0.25F;
         this.stem.pitch = -this.head.pitch;
-        this.bell.pitch = MathHelper.sin(age * 0.2F + 1.5707964F) * 0.1F;
-        this.bell.roll = 0.1F * -(MathHelper.sin(animPos * 0.8F) * 3.0F * animSpeed * 0.5F);
-        this.strandsN.pitch = -(this.head.pitch * 0.1F) + MathHelper.sin(age * 0.1F + 1.5707964F) * 0.3F;
+        this.bell.pitch = Mth.sin(age * 0.2F + 1.5707964F) * 0.1F;
+        this.bell.roll = 0.1F * -(Mth.sin(animPos * 0.8F) * 3.0F * animSpeed * 0.5F);
+        this.strandsN.pitch = -(this.head.pitch * 0.1F) + Mth.sin(age * 0.1F + 1.5707964F) * 0.3F;
         var10000 = this.strandsN;
-        var10000.pitch += 0.2F * MathHelper.sin(animPos * 0.8F) * animSpeed * 0.5F;
+        var10000.pitch += 0.2F * Mth.sin(animPos * 0.8F) * animSpeed * 0.5F;
         this.strandsW.pitch = this.strandsN.pitch;
         this.strandsS.pitch = this.strandsN.pitch;
         this.strandsE.pitch = this.strandsN.pitch;
-        this.leftLeg.pitch = this.head.pitch / 2.0F + MathHelper.cos(animPos * 0.6662F + 1.5707964F) * 0.6F * animSpeed;
-        this.rightLeg.pitch = this.head.pitch / 2.0F + MathHelper.cos(animPos * 0.6662F) * 0.6F * animSpeed;
+        this.leftLeg.pitch = this.head.pitch / 2.0F + Mth.cos(animPos * 0.6662F + 1.5707964F) * 0.6F * animSpeed;
+        this.rightLeg.pitch = this.head.pitch / 2.0F + Mth.cos(animPos * 0.6662F) * 0.6F * animSpeed;
         var10000 = this.leftLeg;
-        var10000.pitch += MathHelper.sin(age * 0.2F) * 0.4F;
+        var10000.pitch += Mth.sin(age * 0.2F) * 0.4F;
         var10000 = this.rightLeg;
-        var10000.pitch += MathHelper.sin(age * 0.2F + 1.5707964F) * 0.4F;
-        this.leftLeg.roll = -this.head.roll + 0.1F * MathHelper.sin(animPos * 0.4F + 1.5707964F) * 4.0F * animSpeed * 0.5F;
-        this.rightLeg.roll = -this.head.roll + 0.1F * MathHelper.sin(animPos * 0.4F) * 4.0F * animSpeed * 0.5F;
+        var10000.pitch += Mth.sin(age * 0.2F + 1.5707964F) * 0.4F;
+        this.leftLeg.roll = -this.head.roll + 0.1F * Mth.sin(animPos * 0.4F + 1.5707964F) * 4.0F * animSpeed * 0.5F;
+        this.rightLeg.roll = -this.head.roll + 0.1F * Mth.sin(animPos * 0.4F) * 4.0F * animSpeed * 0.5F;
     }
 }

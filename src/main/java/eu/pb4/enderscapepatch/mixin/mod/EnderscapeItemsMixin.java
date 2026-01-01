@@ -6,8 +6,8 @@ import eu.pb4.enderscapepatch.impl.item.PolyBaseItem;
 import eu.pb4.polymer.core.api.item.PolymerItem;
 import net.bunten.enderscape.registry.EnderscapeDataComponents;
 import net.bunten.enderscape.registry.EnderscapeItems;
-import net.minecraft.item.Item;
-import net.minecraft.registry.RegistryKey;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.Item;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -17,13 +17,13 @@ import java.util.function.Function;
 
 @Mixin(EnderscapeItems.class)
 public class EnderscapeItemsMixin {
-    @Inject(method = "registerItem(Lnet/minecraft/registry/RegistryKey;Ljava/util/function/Function;Lnet/minecraft/item/Item$Settings;)Lnet/minecraft/item/Item;", at = @At("TAIL"))
-    private static void polymerify(RegistryKey<Item> resourceKey, Function<Item.Settings, Item> function, Item.Settings properties, CallbackInfoReturnable<Item> cir) {
+    @Inject(method = "registerItem(Lnet/minecraft/resources/ResourceKey;Ljava/util/function/Function;Lnet/minecraft/world/item/Item$Properties;)Lnet/minecraft/world/item/Item;", at = @At("TAIL"))
+    private static void polymerify(ResourceKey<Item> resourceKey, Function<Item.Properties, Item> function, Item.Properties properties, CallbackInfoReturnable<Item> cir) {
         PolymerItem polymerItem;
         var item = cir.getReturnValue();
-        if (item.getComponents().contains(EnderscapeDataComponents.ENABLED)) {
+        if (item.components().has(EnderscapeDataComponents.ENABLED)) {
             polymerItem = new ToggableNebuliteToolPolyItem();
-        } else if (item.getComponents().contains(EnderscapeDataComponents.FUELED_TOOL)) {
+        } else if (item.components().has(EnderscapeDataComponents.FUELED_TOOL)) {
             polymerItem = new NebuliteToolPolyItem();
         } else {
             polymerItem = new PolyBaseItem(item);

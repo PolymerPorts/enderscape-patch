@@ -2,22 +2,22 @@ package eu.pb4.enderscapepatch.mixin.mod;
 
 import eu.pb4.factorytools.api.block.model.generic.BlockStateModelManager;
 import net.bunten.enderscape.block.DriftJellyBlock;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.ShapeContext;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityPosition;
-import net.minecraft.network.packet.s2c.play.PlayerPositionLookS2CPacket;
-import net.minecraft.network.packet.s2c.play.PositionFlag;
-import net.minecraft.particle.BlockStateParticleEffect;
-import net.minecraft.particle.ParticleEffect;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.network.protocol.game.ClientboundPlayerPositionPacket;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.PositionMoveRotation;
+import net.minecraft.world.entity.Relative;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -30,39 +30,39 @@ import java.util.Set;
 
 @Mixin(DriftJellyBlock.class)
 public abstract class DriftJellyBlockMixin {
-    @Shadow protected abstract void playBounceEffects(World level, BlockPos pos);
+    @Shadow protected abstract void playBounceEffects(Level level, BlockPos pos);
 
-    @Inject(method = "onEntityLand", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;setVelocity(Lnet/minecraft/util/math/Vec3d;)V", shift = At.Shift.AFTER))
-    private void fixBounce(BlockView level, Entity entity, CallbackInfo ci) {
-        if (entity instanceof ServerPlayerEntity player) {
-            player.networkHandler.sendPacket(new PlayerPositionLookS2CPacket(0,
-                    new EntityPosition(Vec3d.ZERO, new Vec3d(0, entity.getVelocity().y, 0), 0, 0),
-                    Set.of(PositionFlag.DELTA_X, PositionFlag.DELTA_Z, PositionFlag.X, PositionFlag.Y, PositionFlag.Z, PositionFlag.X_ROT, PositionFlag.Y_ROT)
+    @Inject(method = "updateEntityMovementAfterFallOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;setDeltaMovement(Lnet/minecraft/world/phys/Vec3;)V", shift = At.Shift.AFTER))
+    private void fixBounce(BlockGetter level, Entity entity, CallbackInfo ci) {
+        if (entity instanceof ServerPlayer player) {
+            player.connection.send(new ClientboundPlayerPositionPacket(0,
+                    new PositionMoveRotation(Vec3.ZERO, new Vec3(0, entity.getDeltaMovement().y, 0), 0, 0),
+                    Set.of(Relative.DELTA_X, Relative.DELTA_Z, Relative.X, Relative.Y, Relative.Z, Relative.X_ROT, Relative.Y_ROT)
             ));
         }
-        if (level instanceof World world) {
-            this.playBounceEffects(world, entity.getSteppingPos());
+        if (level instanceof Level world) {
+            this.playBounceEffects(world, entity.getOnPos());
         }
     }
 
     @SuppressWarnings("OverwriteAuthorRequired")
     @Overwrite
-    protected VoxelShape getCollisionShape(BlockState state, BlockView level, BlockPos pos, ShapeContext context) {
-        return VoxelShapes.fullCube();
+    protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return Shapes.block();
     }
 
-    @Redirect(method = "onLandedUpon", at = @At(value = "INVOKE", target = "Lnet/bunten/enderscape/block/DriftJellyBlock;playBounceEffects(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)V"))
-    private void dont(DriftJellyBlock instance, World y, BlockPos z) {}
+    @Redirect(method = "fallOn", at = @At(value = "INVOKE", target = "Lnet/bunten/enderscape/block/DriftJellyBlock;playBounceEffects(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)V"))
+    private void dont(DriftJellyBlock instance, Level y, BlockPos z) {}
 
-    @Redirect(method = "playBounceEffects", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;isClient()Z", ordinal = 1))
-    private boolean fakeClient(World instance) {
+    @Redirect(method = "playBounceEffects", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;isClientSide()Z", ordinal = 1))
+    private boolean fakeClient(Level instance) {
         return true;
     }
 
-    @Redirect(method = "playBounceEffects", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;addParticleClient(Lnet/minecraft/particle/ParticleEffect;DDDDDD)V"))
-    private void fixParticles(World instance, ParticleEffect parameters, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
-        if (instance instanceof ServerWorld serverWorld) {
-            serverWorld.spawnParticles(BlockStateModelManager.getParticle(((BlockStateParticleEffect) parameters).getBlockState()), x, y, z, 0, velocityX, velocityY, velocityZ, 1);
+    @Redirect(method = "playBounceEffects", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;addParticle(Lnet/minecraft/core/particles/ParticleOptions;DDDDDD)V"))
+    private void fixParticles(Level instance, ParticleOptions parameters, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
+        if (instance instanceof ServerLevel serverWorld) {
+            serverWorld.sendParticles(BlockStateModelManager.getParticle(((BlockParticleOption) parameters).getState()), x, y, z, 0, velocityX, velocityY, velocityZ, 1);
         }
     }
 }

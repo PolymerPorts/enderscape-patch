@@ -15,18 +15,15 @@ import eu.pb4.polymer.resourcepack.extras.api.format.blockstate.BlockStateAsset;
 import eu.pb4.polymer.resourcepack.extras.api.format.blockstate.StateModelVariant;
 import eu.pb4.polymer.virtualentity.api.ElementHolder;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.PaneBlock;
-import net.minecraft.item.ItemStack;
-import net.minecraft.predicate.block.BlockStatePredicate;
-import net.minecraft.registry.Registries;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Hand;
-import net.minecraft.util.Pair;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.IronBarsBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 import xyz.nucleoid.packettweaker.PacketContext;
 
@@ -40,8 +37,8 @@ public record MapPolymerBlock(Map<BlockState, BlockState> map, BiFunction<BlockS
         var map = new IdentityHashMap<BlockState, BlockState>();
 
 
-        for (var state : block.getStateManager().getStates()) {
-            map.put(state, PolymerBlockResourceUtils.requestEmpty(BlockModelType.getBars(state.get(PaneBlock.WATERLOGGED), state.get(PaneBlock.NORTH), state.get(PaneBlock.SOUTH), state.get(PaneBlock.WEST), state.get(PaneBlock.EAST))));
+        for (var state : block.getStateDefinition().getPossibleStates()) {
+            map.put(state, PolymerBlockResourceUtils.requestEmpty(BlockModelType.getBars(state.getValue(IronBarsBlock.WATERLOGGED), state.getValue(IronBarsBlock.NORTH), state.getValue(IronBarsBlock.SOUTH), state.getValue(IronBarsBlock.WEST), state.getValue(IronBarsBlock.EAST))));
         }
 
         return new MapPolymerBlock(map, BlockStateModel::longRange);
@@ -53,12 +50,12 @@ public record MapPolymerBlock(Map<BlockState, BlockState> map, BiFunction<BlockS
     }
 
     @Override
-    public @Nullable ElementHolder createElementHolder(ServerWorld world, BlockPos pos, BlockState initialBlockState) {
+    public @Nullable ElementHolder createElementHolder(ServerLevel world, BlockPos pos, BlockState initialBlockState) {
         return modelFunction.apply(initialBlockState, pos);
     }
 
     @Override
-    public boolean isIgnoringBlockInteractionPlaySoundExceptedEntity(BlockState state, ServerPlayerEntity player, Hand hand, ItemStack stack, ServerWorld world, BlockHitResult blockHitResult) {
+    public boolean isIgnoringBlockInteractionPlaySoundExceptedEntity(BlockState state, ServerPlayer player, InteractionHand hand, ItemStack stack, ServerLevel world, BlockHitResult blockHitResult) {
         return true;
     }
 }

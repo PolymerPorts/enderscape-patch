@@ -4,7 +4,7 @@ import eu.pb4.factorytools.api.virtualentity.emuvanilla.EntityValueExtraction;
 import eu.pb4.factorytools.api.virtualentity.emuvanilla.animation.Animation;
 import eu.pb4.factorytools.api.virtualentity.emuvanilla.model.*;
 import net.bunten.enderscape.entity.rustle.Rustle;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
 
 public class RustleModel extends EntityModel<Rustle> {
     private final ModelPart body;
@@ -53,23 +53,23 @@ public class RustleModel extends EntityModel<Rustle> {
     public void setAngles(Rustle state) {
         super.setAngles(state);
 
-        float age = state.age;
-        float animPos = state.limbAnimator.getAnimationProgress(1);
-        float animSpeed = state.limbAnimator.getAmplitude(1);
-        this.leftAntenna.yaw = MathHelper.sin(age + animPos / 3.0F * 0.1F) * animSpeed * 0.3F;
-        this.rightAntenna.yaw = MathHelper.sin(age + animPos / 3.0F * 0.1F + 1.5707964F) * animSpeed * 0.8F;
-        this.leftAntenna.pitch = MathHelper.sin(age + animPos / 3.0F * 0.1F + 1.5707964F) * animSpeed * 0.8F;
-        this.rightAntenna.pitch = MathHelper.sin(age + animPos / 3.0F * 0.1F + 4.712389F) * animSpeed * 0.8F;
+        float age = state.tickCount;
+        float animPos = state.walkAnimation.position(1);
+        float animSpeed = state.walkAnimation.speed(1);
+        this.leftAntenna.yaw = Mth.sin(age + animPos / 3.0F * 0.1F) * animSpeed * 0.3F;
+        this.rightAntenna.yaw = Mth.sin(age + animPos / 3.0F * 0.1F + 1.5707964F) * animSpeed * 0.8F;
+        this.leftAntenna.pitch = Mth.sin(age + animPos / 3.0F * 0.1F + 1.5707964F) * animSpeed * 0.8F;
+        this.rightAntenna.pitch = Mth.sin(age + animPos / 3.0F * 0.1F + 4.712389F) * animSpeed * 0.8F;
         ModelPart var10000 = this.head;
-        var10000.pitch += state.getPitch() * 0.017453292F / 2.0F;
+        var10000.pitch += state.getXRot() * 0.017453292F / 2.0F;
         var10000 = this.head;
         var10000.yaw += EntityValueExtraction.getRelativeHeadYaw(state) * 0.017453292F / 2.0F;
-        this.head.roll = MathHelper.sin(age + animPos / 3.0F * 0.06F) * animSpeed * 0.5F;
-        this.body.roll = MathHelper.sin(age + animPos / 3.0F * 0.03F) * animSpeed * 0.25F;
-        this.tail.roll = MathHelper.sin(age + animPos / 3.0F * 0.06F) * animSpeed * 0.5F;
-        this.frontSpines.yaw = MathHelper.sin(age + animPos / 3.0F * 0.1F) * animSpeed * 0.8F;
-        this.middleSpines.yaw = MathHelper.sin(age + animPos / 3.0F * 0.1F + 1.5707964F) * animSpeed * 0.8F;
-        this.backSpines.yaw = MathHelper.sin(age + animPos / 3.0F * 0.1F + 3.1415927F) * animSpeed * 0.8F;
+        this.head.roll = Mth.sin(age + animPos / 3.0F * 0.06F) * animSpeed * 0.5F;
+        this.body.roll = Mth.sin(age + animPos / 3.0F * 0.03F) * animSpeed * 0.25F;
+        this.tail.roll = Mth.sin(age + animPos / 3.0F * 0.06F) * animSpeed * 0.5F;
+        this.frontSpines.yaw = Mth.sin(age + animPos / 3.0F * 0.1F) * animSpeed * 0.8F;
+        this.middleSpines.yaw = Mth.sin(age + animPos / 3.0F * 0.1F + 1.5707964F) * animSpeed * 0.8F;
+        this.backSpines.yaw = Mth.sin(age + animPos / 3.0F * 0.1F + 3.1415927F) * animSpeed * 0.8F;
         this.sleepingAnimation.apply(state.sleepingAnimationState, age);
         this.head.xScale = state.isBaby() ? 1.25F : 1.0F;
         this.head.yScale = state.isBaby() ? 1.25F : 1.0F;
