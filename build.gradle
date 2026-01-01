@@ -71,12 +71,13 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	modImplementation("maven.modrinth:enderscape:zgU3W5P9") {
+	modImplementation("maven.modrinth:enderscape:ELcG9H7k") {
 		exclude(group: "net.fabricmc")
 	}
 
 	modImplementation 'com.github.ramixin:mixson-fabric:1.4.0'
 	modImplementation "dev.isxander:yet-another-config-lib:3.8.0+1.21.9-fabric"
+	modImplementation "maven.modrinth:lithostitched:1.5.2-fabric-1.21.9"
 
 
 	modImplementation include('eu.pb4:factorytools:0.8.2+1.21.10')

@@ -38,6 +38,7 @@ public record StatePolymerBlock(Map<BlockState, BlockState> map, FactoryBlock fa
     public static StatePolymerBlock of(Block block, BlockModelType type) {
         return of(block, type, BaseFactoryBlock.BARRIER, x -> true);
     }
+
     public static StatePolymerBlock of(Block block, BlockModelType type, FactoryBlock fallback, Predicate<BlockState> canUseBlock) {
         var id = Registries.BLOCK.getId(block);
 
@@ -53,7 +54,6 @@ public record StatePolymerBlock(Map<BlockState, BlockState> map, FactoryBlock fa
 
             BlockStateModelManager.parseVariants(block, decoded.variants().orElseThrow(), (a, b) -> list.add(new Pair<>(a, b)));
             var map = new IdentityHashMap<BlockState, BlockState>();
-
 
             for (var state : block.getStateManager().getStates()) {
                 for (var pair : list) {

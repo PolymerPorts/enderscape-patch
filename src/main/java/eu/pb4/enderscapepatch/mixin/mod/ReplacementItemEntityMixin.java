@@ -10,7 +10,7 @@ import java.util.UUID;
 import eu.pb4.enderscapepatch.impl.EnderscapePolymerPatch;
 import net.bunten.enderscape.entity.magnia.MagniaMoveable;
 import net.bunten.enderscape.entity.magnia.MagniaProperties;
-import net.bunten.enderscape.item.MagniaAttractorItem;
+import net.bunten.enderscape.item.component.EntityMagnet;
 import net.bunten.enderscape.registry.EnderscapeStats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -116,7 +116,7 @@ public abstract class ReplacementItemEntityMixin extends Entity implements Magni
         if (!this.getEntityWorld().isClient()) {
             ItemStack stack = this.getStack();
             int count = stack.getCount();
-            if (this.pickupDelay == 0 && (this.owner == null || this.owner.equals(player.getUuid())) && MagniaAttractorItem.tryAddToBundle(player.getInventory(), stack)) {
+            if (pickupDelay == 0 && (owner == null || owner.equals(player.getUuid())) && EntityMagnet.tryAddToBundle(player.getInventory(), stack)) {
                 player.sendPickup(this.entity, count);
                 if (stack.isEmpty()) {
                     this.discard();

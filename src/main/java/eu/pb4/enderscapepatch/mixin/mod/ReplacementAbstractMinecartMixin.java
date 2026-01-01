@@ -3,6 +3,7 @@ package eu.pb4.enderscapepatch.mixin.mod;
 import eu.pb4.enderscapepatch.impl.EnderscapePolymerPatch;
 import net.bunten.enderscape.entity.magnia.MagniaMoveable;
 import net.bunten.enderscape.entity.magnia.MagniaProperties;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.data.DataTracker;

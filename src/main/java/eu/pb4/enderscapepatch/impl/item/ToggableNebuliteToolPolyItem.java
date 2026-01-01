@@ -12,7 +12,7 @@ import xyz.nucleoid.packettweaker.PacketContext;
 
 import java.util.List;
 
-public record MagniaAttractorPolyItem() implements PolymerItem {
+public record ToggableNebuliteToolPolyItem() implements PolymerItem {
     @Override
     public Item getPolymerItem(ItemStack itemStack, PacketContext packetContext) {
         return Items.TRIAL_KEY;
