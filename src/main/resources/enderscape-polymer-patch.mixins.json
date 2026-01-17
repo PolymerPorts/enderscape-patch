@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "AbstractOvergrowthBlockAccessor",
+    "AgeableMobAccessor",
     "DataTrackerBuilderMixin",
     "DataTrackerMixin",
     "DirectionSetAccessor",
@@ -12,6 +13,7 @@
     "LivingEntityMixin",
     "ServerPlayerEntityMixin",
     "ServerPlayNetworkingMixin",
+    "TorchBlockAccessor",
     "mod.DrifterMixin",
     "mod.DriftJellyBlockMixin",
     "mod.EnderscapeAttributesMixin",
@@ -38,7 +40,8 @@
     "mod.ReplacementExperienceOrbMixin",
     "mod.ReplacementItemEntityMixin",
     "mod.ReplacementLivingEntityMixin",
-    "mod.RubblemiteMixin"
+    "mod.RubblemiteMixin",
+    "mod.RustleMixin"
   ],
   "injectors": {
     "defaultRequire": 1

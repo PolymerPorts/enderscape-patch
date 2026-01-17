@@ -52,6 +52,10 @@ public class EnderscapeBlocksMixin {
             overlay = BaseFactoryBlock.BARRIER;
         } else if (block instanceof CampfireBlock) {
             overlay = CampfireFactoryBlock.INSTANCE;
+        } else if (block instanceof WallTorchBlock) {
+            overlay = BaseFactoryBlock.SAPLING.withTick(true).withModel(TorchModel.Wall::new);
+        } else if (block instanceof TorchBlock) {
+            overlay = BaseFactoryBlock.SAPLING.withTick(true).withModel(TorchModel::new);
         } else if (block instanceof ChainBlock) {
             overlay = ChainFactoryBlock.INSTANCE;
         } else if (block instanceof IronBarsBlock) {

@@ -2,10 +2,10 @@ package eu.pb4.enderscapepatch.impl.entity;
 
 import eu.pb4.enderscapepatch.impl.PacketHandler;
 import eu.pb4.enderscapepatch.impl.entity.model.EntityModels;
-import eu.pb4.factorytools.api.virtualentity.emuvanilla.PolyModelInstance;
-import eu.pb4.factorytools.api.virtualentity.emuvanilla.model.EntityModel;
-import eu.pb4.factorytools.api.virtualentity.emuvanilla.poly.ScalingEntityModel;
-import eu.pb4.factorytools.api.virtualentity.emuvanilla.poly.SimpleEntityModel;
+import eu.pb4.factorytools.api.virtualentity.emuvanilla2.PolyModelInstance;
+import eu.pb4.factorytools.api.virtualentity.emuvanilla2.model.EntityModel;
+import eu.pb4.factorytools.api.virtualentity.emuvanilla2.poly.ScalingEntityModel;
+import eu.pb4.factorytools.api.virtualentity.emuvanilla2.poly.SimpleEntityModel;
 import eu.pb4.polymer.core.api.entity.PolymerEntity;
 import eu.pb4.polymer.virtualentity.api.VirtualEntityUtils;
 import eu.pb4.polymer.virtualentity.api.attachment.IdentifiedUniqueEntityAttachment;
@@ -35,9 +35,7 @@ public record BasePolymerEntity(LivingEntity entity) implements PolymerEntity {
         var model = (PolyModelInstance<EntityModel<LivingEntity>>) EntityModels.BY_TYPE.get(entity.getType());
         if (model != null) {
             //noinspection unchecked
-            IdentifiedUniqueEntityAttachment.ofTicking(MODEL, entity instanceof Rustle
-                    ? new ScalingEntityModel<>(entity, model)
-                    : new SimpleEntityModel<>(entity, model), entity);
+            IdentifiedUniqueEntityAttachment.ofTicking(MODEL, new SimpleEntityModel<>(entity, model), entity);
         }
     }
 
