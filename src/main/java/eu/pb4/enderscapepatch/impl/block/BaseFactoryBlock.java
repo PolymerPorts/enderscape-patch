@@ -10,7 +10,7 @@ import eu.pb4.polymer.blocks.api.PolymerTexturedBlock;
 import eu.pb4.polymer.core.api.block.PolymerBlock;
 import eu.pb4.polymer.virtualentity.api.ElementHolder;
 import org.jetbrains.annotations.Nullable;
-import xyz.nucleoid.packettweaker.PacketContext;
+import net.fabricmc.fabric.api.networking.v1.context.PacketContext;
 
 import java.util.function.BiFunction;
 import net.minecraft.core.BlockPos;
@@ -26,12 +26,14 @@ public record BaseFactoryBlock(BlockState clientState, boolean tick, BiFunction<
     public static final BaseFactoryBlock BARRIER = new BaseFactoryBlock(Blocks.BARRIER. defaultBlockState(), false, BlockStateModel::longRange);
     public static final BaseFactoryBlock CAMPFIRE = new BaseFactoryBlock(PolymerBlockResourceUtils.requestEmpty(BlockModelType.CAMPFIRE), false, BlockStateModel::longRange);
     //public static final BaseFactoryBlock TOP_TRAPDOOR = new BaseFactoryBlock(PolymerBlockResourceUtils.requestEmpty(BlockModelType.TOP_TRAPDOOR), false, BlockStateModel::longRange);
-    public static final BaseFactoryBlock VINE = new BaseFactoryBlock(PolymerBlockResourceUtils.requestEmpty(BlockModelType.VINES_BLOCK), false, BlockStateModel::longRange);
-    public static final BaseFactoryBlock SAPLING = new BaseFactoryBlock(PolymerBlockResourceUtils.requestEmpty(BlockModelType.PLANT_BLOCK),false, BlockStateModel::midRange);
-    public static final BaseFactoryBlock SAPLING_SHORT = new BaseFactoryBlock(PolymerBlockResourceUtils.requestEmpty(BlockModelType.PLANT_BLOCK),false, BlockStateModel::shortRange);
+    public static final BaseFactoryBlock VINE = new BaseFactoryBlock(PolymerBlockResourceUtils.requestEmpty(BlockModelType.VINES), false, BlockStateModel::longRange);
+    public static final BaseFactoryBlock SAPLING = new BaseFactoryBlock(PolymerBlockResourceUtils.requestEmpty(BlockModelType.PLANT),false, BlockStateModel::midRange);
+    public static final BaseFactoryBlock SAPLING_SHORT = new BaseFactoryBlock(PolymerBlockResourceUtils.requestEmpty(BlockModelType.PLANT),false, BlockStateModel::shortRange);
     //public static final BaseFactoryBlock KELP = new BaseFactoryBlock(PolymerBlockResourceUtils.requestEmpty(BlockModelType.KELP_BLOCK),false, BlockStateModel::longRange);
     //public static final BaseFactoryBlock TRIPWIRE = new BaseFactoryBlock(PolymerBlockResourceUtils.requestEmpty(BlockModelType.TRIPWIRE_BLOCK),false, BlockStateModel::longRange);
     //public static final BaseFactoryBlock TRIPWIRE_FLAT = new BaseFactoryBlock(PolymerBlockResourceUtils.requestEmpty(BlockModelType.TRIPWIRE_BLOCK_FLAT),false, BlockStateModel::longRange);
+
+    public static final BaseFactoryBlock AIR = new BaseFactoryBlock(Blocks.AIR.defaultBlockState(), false, BlockStateModel::midRange);
 
     @Override
     public BlockState getPolymerBlockState(BlockState state, PacketContext context) {

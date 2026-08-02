@@ -2,9 +2,9 @@ package eu.pb4.enderscapepatch.impl.res;
 
 import com.mojang.serialization.MapCodec;
 import eu.pb4.polymer.resourcepack.extras.api.format.item.property.bool.BooleanProperty;
-import net.bunten.enderscape.item.ItemStackContext;
-import net.bunten.enderscape.item.component.Enabled;
-import net.bunten.enderscape.item.component.FueledTool;
+import net.penumbra.enderscape.item.ItemStackContext;
+import net.penumbra.enderscape.item.component.Enabled;
+import net.penumbra.enderscape.item.component.FueledTool;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;

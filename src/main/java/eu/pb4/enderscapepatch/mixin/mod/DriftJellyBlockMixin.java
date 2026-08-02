@@ -1,7 +1,7 @@
 package eu.pb4.enderscapepatch.mixin.mod;
 
 import eu.pb4.factorytools.api.block.model.generic.BlockStateModelManager;
-import net.bunten.enderscape.block.DriftJellyBlock;
+import net.penumbra.enderscape.block.DriftJellyBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
@@ -32,17 +32,16 @@ import java.util.Set;
 public abstract class DriftJellyBlockMixin {
     @Shadow protected abstract void playBounceEffects(Level level, BlockPos pos);
 
-    @Inject(method = "updateEntityMovementAfterFallOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;setDeltaMovement(Lnet/minecraft/world/phys/Vec3;)V", shift = At.Shift.AFTER))
-    private void fixBounce(BlockGetter level, Entity entity, CallbackInfo ci) {
+    @Inject(method = "updateEntityMovementAfterFallOn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;gameEvent(Lnet/minecraft/core/Holder;)V", shift = At.Shift.AFTER))
+    private void fixBounce(Entity entity, CallbackInfo ci) {
         if (entity instanceof ServerPlayer player) {
             player.connection.send(new ClientboundPlayerPositionPacket(0,
                     new PositionMoveRotation(Vec3.ZERO, new Vec3(0, entity.getDeltaMovement().y, 0), 0, 0),
                     Set.of(Relative.DELTA_X, Relative.DELTA_Z, Relative.X, Relative.Y, Relative.Z, Relative.X_ROT, Relative.Y_ROT)
             ));
         }
-        if (level instanceof Level world) {
-            this.playBounceEffects(world, entity.getOnPos());
-        }
+
+        this.playBounceEffects(entity.level(), entity.getOnPos());
     }
 
     @SuppressWarnings("OverwriteAuthorRequired")
@@ -51,7 +50,7 @@ public abstract class DriftJellyBlockMixin {
         return Shapes.block();
     }
 
-    @Redirect(method = "fallOn", at = @At(value = "INVOKE", target = "Lnet/bunten/enderscape/block/DriftJellyBlock;playBounceEffects(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)V"))
+    @Redirect(method = "fallOn", at = @At(value = "INVOKE", target = "Lnet/penumbra/enderscape/block/DriftJellyBlock;playBounceEffects(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;)V"))
     private void dont(DriftJellyBlock instance, Level y, BlockPos z) {}
 
     @Redirect(method = "playBounceEffects", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;isClientSide()Z", ordinal = 1))

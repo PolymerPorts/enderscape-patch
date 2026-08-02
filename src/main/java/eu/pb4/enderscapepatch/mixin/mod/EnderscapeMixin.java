@@ -2,7 +2,7 @@ package eu.pb4.enderscapepatch.mixin.mod;
 
 import eu.pb4.enderscapepatch.impl.EnderscapePolymerPatch;
 import eu.pb4.polymer.core.api.other.PolymerSoundEvent;
-import net.bunten.enderscape.Enderscape;
+import net.penumbra.enderscape.Enderscape;
 import net.minecraft.core.Holder;
 import net.minecraft.sounds.SoundEvent;
 import org.spongepowered.asm.mixin.Mixin;

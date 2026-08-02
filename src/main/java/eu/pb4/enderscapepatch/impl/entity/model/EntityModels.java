@@ -3,19 +3,20 @@ package eu.pb4.enderscapepatch.impl.entity.model;
 import eu.pb4.enderscapepatch.impl.entity.model.rubblemite.RubblemiteModel;
 import eu.pb4.enderscapepatch.impl.entity.model.rustle.BabyRustleModel;
 import eu.pb4.enderscapepatch.impl.entity.model.rustle.RustleModel;
-import eu.pb4.factorytools.api.virtualentity.emuvanilla2.PolyModelInstance;
+import eu.pb4.factorytools.api.virtualentity.emuvanilla.PolyModelInstance;
 
-import eu.pb4.factorytools.api.virtualentity.emuvanilla2.model.EntityModel;
-import eu.pb4.factorytools.api.virtualentity.emuvanilla2.model.LayerDefinition;
-import eu.pb4.factorytools.api.virtualentity.emuvanilla2.model.ModelPart;
-import net.bunten.enderscape.Enderscape;
-import net.bunten.enderscape.entity.rubblemite.RubblemiteVariant;
-import net.bunten.enderscape.registry.EnderscapeEntities;
-import net.bunten.enderscape.registry.EnderscapeRubblemiteVariants;
+import eu.pb4.factorytools.api.virtualentity.emuvanilla.model.EntityModel;
+import eu.pb4.factorytools.api.virtualentity.emuvanilla.model.LayerDefinition;
+import eu.pb4.factorytools.api.virtualentity.emuvanilla.model.ModelPart;
+import net.penumbra.enderscape.Enderscape;
+import net.penumbra.enderscape.entity.rubblemite.RubblemiteVariant;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.Util;
 import net.minecraft.world.entity.EntityType;
+import net.penumbra.enderscape.registry.entity.EnderscapeEntities;
+import net.penumbra.enderscape.registry.entity.EnderscapeRubblemiteVariants;
+
 import java.util.*;
 import java.util.function.Function;
 
@@ -29,11 +30,11 @@ public interface EntityModels {
         var instance = create(RubblemiteModel::new, RubblemiteModel.createLayer(), EnderscapeRubblemiteVariants.DEFAULT.identifier().withPrefix("entity/rubblemite/"));
         m.put(EnderscapeRubblemiteVariants.DEFAULT, instance);
         for (var variant : EnderscapeRubblemiteVariants.RUBBLEMITE_VARIANTS) {
-            m.put(variant, withTexture(instance, variant.identifier().withPrefix("entity/rubblemite/")));
+            m.put(variant, withTexture(instance, variant.identifier().withPrefix("entity/rubblemite/rubblemite_")));
         }
     });
     PolyModelInstance<RustleModel> RUSTLE = create(RustleModel::new, RustleModel.createLayer(), Enderscape.id("entity/rustle/rustle"));
-    PolyModelInstance<BabyRustleModel> BABY_RUSTLE = create(BabyRustleModel::new, BabyRustleModel.createLayer(), Enderscape.id("entity/rustle/baby"));
+    PolyModelInstance<BabyRustleModel> BABY_RUSTLE = create(BabyRustleModel::new, BabyRustleModel.createLayer(), Enderscape.id("entity/rustle/rustle_baby"));
 
     IdentityHashMap<EntityType<?>, PolyModelInstance<?>> BY_TYPE = Util.make(() -> {
         var m = new IdentityHashMap<EntityType<?>, PolyModelInstance<?>>();

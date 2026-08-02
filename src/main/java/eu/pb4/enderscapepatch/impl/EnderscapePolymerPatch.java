@@ -1,10 +1,10 @@
 package eu.pb4.enderscapepatch.impl;
 
-import eu.pb4.enderscapepatch.impl.mixson.MixsonPatcher;
 import eu.pb4.enderscapepatch.impl.res.ResourcePackGenerator;
 import eu.pb4.polymer.blocks.api.BlockModelType;
 import eu.pb4.polymer.blocks.api.PolymerBlockResourceUtils;
 import eu.pb4.polymer.core.api.item.PolymerItemUtils;
+import eu.pb4.polymer.core.api.utils.PolymerSyncedObject;
 import eu.pb4.polymer.resourcepack.api.PolymerResourcePackUtils;
 import eu.pb4.polymer.resourcepack.extras.api.ResourcePackExtras;
 import eu.pb4.polymer.resourcepack.extras.api.format.item.ItemAsset;
@@ -22,7 +22,11 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.RecipeBookCategories;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.material.Fluids;
+import net.penumbra.enderscape.item.crafting.RustleRecipe;
+import net.penumbra.enderscape.item.crafting.VoidLachrymaRecipe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spongepowered.asm.mixin.MixinEnvironment;
@@ -42,10 +46,13 @@ public class EnderscapePolymerPatch implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        //MixinEnvironment.getCurrentEnvironment().audit();
+
         PolymerResourcePackUtils.addModAssets("enderscape");
         PolymerResourcePackUtils.addModAssets(MOD_ID);
         ResourcePackExtras.forDefault().addBridgedModelsFolder(
                 Identifier.fromNamespaceAndPath("enderscape", "block"),
+                Identifier.fromNamespaceAndPath("enderscape-patch", "block"),
                 Identifier.fromNamespaceAndPath("enderscape", "block_sign")
         );
         ResourcePackExtras.forDefault().addBridgedModelsFolder(Identifier.fromNamespaceAndPath("enderscape", "entity"), (id, b) -> {
@@ -53,9 +60,10 @@ public class EnderscapePolymerPatch implements ModInitializer {
         });
 
         ResourcePackGenerator.setup();
-        MixsonPatcher.setup();
 
         PolymerItemUtils.syncDefaultComponent(Items.SHULKER_SHELL, DataComponents.EQUIPPABLE);
+        PolymerSyncedObject.setSyncedObject(BuiltInRegistries.RECIPE_BOOK_CATEGORY, RustleRecipe.CATEGORY, (_, _) -> RecipeBookCategories.CAMPFIRE);
+        PolymerSyncedObject.setSyncedObject(BuiltInRegistries.RECIPE_BOOK_CATEGORY, VoidLachrymaRecipe.CATEGORY, (_, _) -> RecipeBookCategories.CAMPFIRE);
 
         //SoundPatcher.convertAllVanillaBlockSoundsIntoServerSounds();
 

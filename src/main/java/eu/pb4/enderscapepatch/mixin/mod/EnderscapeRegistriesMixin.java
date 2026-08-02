@@ -2,7 +2,7 @@ package eu.pb4.enderscapepatch.mixin.mod;
 
 import com.mojang.serialization.Codec;
 import eu.pb4.polymer.core.api.utils.PolymerUtils;
-import net.bunten.enderscape.registry.EnderscapeRegistries;
+import net.penumbra.enderscape.registry.EnderscapeRegistries;
 import net.fabricmc.fabric.api.event.registry.DynamicRegistries;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;

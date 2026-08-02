@@ -1,10 +1,10 @@
 package eu.pb4.enderscapepatch.impl.entity.model.rustle;
 
 
-import eu.pb4.factorytools.api.virtualentity.emuvanilla2.EntityValueExtraction;
-import eu.pb4.factorytools.api.virtualentity.emuvanilla2.animation.KeyframeAnimation;
-import eu.pb4.factorytools.api.virtualentity.emuvanilla2.model.*;
-import net.bunten.enderscape.entity.rustle.Rustle;
+import eu.pb4.factorytools.api.virtualentity.emuvanilla.EntityValueExtraction;
+import eu.pb4.factorytools.api.virtualentity.emuvanilla.animation.KeyframeAnimation;
+import eu.pb4.factorytools.api.virtualentity.emuvanilla.model.*;
+import net.penumbra.enderscape.entity.rustle.Rustle;
 import net.minecraft.util.Mth;
 
 public class RustleModel extends EntityModel<Rustle> {
@@ -20,6 +20,10 @@ public class RustleModel extends EntityModel<Rustle> {
 
     private final KeyframeAnimation sleepingAnimation;
 
+    private final KeyframeAnimation conversionBeginAnimation;
+    private final KeyframeAnimation conversionAnimation;
+    private final KeyframeAnimation conversionEndAnimation;
+
     public RustleModel(ModelPart root) {
         super(root);
 
@@ -34,6 +38,10 @@ public class RustleModel extends EntityModel<Rustle> {
         frontSpines = head.getChild("frontSpines");
 
         sleepingAnimation = RustleAnimations.SLEEPING.bake(root);
+
+        conversionBeginAnimation = RustleAnimations.CONVERSION_BEGIN.bake(root);
+        conversionAnimation = RustleAnimations.CONVERSION.bake(root);
+        conversionEndAnimation = RustleAnimations.CONVERSION_END.bake(root);
     }
 
     public static LayerDefinition createLayer() {
@@ -41,9 +49,10 @@ public class RustleModel extends EntityModel<Rustle> {
         PartDefinition partdefinition = meshdefinition.getRoot();
 
         PartDefinition body = partdefinition.addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 0).addBox(-4.0F, -5.0F, -3.0F, 8.0F, 5.0F, 10.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 24.0F, 0.0F));
-        PartDefinition crossSpines = body.addOrReplaceChild("crossSpines", CubeListBuilder.create().texOffs(0, 27).addBox(-7.0F, -5.0F, 0.25F, 14.0F, 5.0F, 0.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -5.0F, 1.75F));
+        PartDefinition crossSpines = body.addOrReplaceChild("crossSpines", CubeListBuilder.create().texOffs(0, 27).addBox(-7.0F, -5.0F, 0.25F, 14.0F, 5.0F, 0.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -5.0F, 1.75F, 0.0F, -0.7854F, 0.0F));
 
         crossSpines.addOrReplaceChild("cube_r1", CubeListBuilder.create().texOffs(1, 27).addBox(-6.0F, -1.0F, 0.0F, 13.0F, 5.0F, 0.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(0.0F, -4.0F, 0.25F, 0.0F, 1.5708F, 0.0F));
+
         body.addOrReplaceChild("middleSpines", CubeListBuilder.create().texOffs(0, 20).addBox(-7.0F, -4.5F, 0.0F, 14.0F, 7.0F, 0.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -2.5F, 0.0F));
         body.addOrReplaceChild("backSpines", CubeListBuilder.create().texOffs(0, 20).mirror().addBox(-7.0F, -4.5F, 0.0F, 14.0F, 7.0F, 0.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(0.0F, -2.5F, 5.0F));
         body.addOrReplaceChild("tail", CubeListBuilder.create().texOffs(36, 9).addBox(-2.0F, -1.5F, 0.0F, 4.0F, 3.0F, 2.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, -1.5F, 7.0F));
@@ -83,6 +92,10 @@ public class RustleModel extends EntityModel<Rustle> {
         backSpines.yRot = Mth.sin(age + (animPos / 3) * 0.1F + Mth.PI) * animSpeed * 0.8F;
 
         sleepingAnimation.apply(state.sleepingAnimationState, age);
+
+        conversionBeginAnimation.apply(state.conversionBeginAnimationState, age, 0.85F);
+        conversionAnimation.apply(state.conversionAnimationState, age, state.getQueuedRecipe().map(recipe -> (20.0F / recipe.effects().swellDuration())).orElse(1f));
+        conversionEndAnimation.apply(state.conversionEndAnimationState, age, 1.15F);
 
         crossSpines.visible = !state.isSheared();
     }

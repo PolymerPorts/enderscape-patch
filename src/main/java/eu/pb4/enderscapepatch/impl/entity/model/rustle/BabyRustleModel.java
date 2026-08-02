@@ -1,8 +1,8 @@
 package eu.pb4.enderscapepatch.impl.entity.model.rustle;
 
-import eu.pb4.factorytools.api.virtualentity.emuvanilla2.animation.KeyframeAnimation;
-import eu.pb4.factorytools.api.virtualentity.emuvanilla2.model.*;
-import net.bunten.enderscape.entity.rustle.Rustle;
+import eu.pb4.factorytools.api.virtualentity.emuvanilla.animation.KeyframeAnimation;
+import eu.pb4.factorytools.api.virtualentity.emuvanilla.model.*;
+import net.penumbra.enderscape.entity.rustle.Rustle;
 import net.minecraft.util.Mth;
 
 public class BabyRustleModel extends EntityModel<Rustle> {

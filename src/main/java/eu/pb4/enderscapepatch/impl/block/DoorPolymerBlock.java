@@ -20,18 +20,14 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DoorHingeSide;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
-import xyz.nucleoid.packettweaker.PacketContext;
+import net.fabricmc.fabric.api.networking.v1.context.PacketContext;
 
 import java.util.Locale;
 import java.util.Map;
 
 public record DoorPolymerBlock() implements FactoryBlock, PolymerTexturedBlock, BSMMParticleBlock {
     public static final DoorPolymerBlock INSTANCE = new DoorPolymerBlock();
-    private static final Map<Direction, BlockState> STATES_REGULAR = Util.makeEnumMap(Direction.class, x -> PolymerBlockResourceUtils.requestEmpty(BlockModelType.valueOf(switch (x) {
-        case UP -> "BOTTOM";
-        case DOWN -> "TOP";
-        default -> x.getSerializedName().toUpperCase(Locale.ROOT);
-    } + "_TRAPDOOR")));
+    private static final Map<Direction, BlockState> STATES_REGULAR = Util.makeEnumMap(Direction.class, x -> PolymerBlockResourceUtils.requestEmpty(BlockModelType.getTrapdoor(x, false)));
 
     @Override
     public BlockState getPolymerBlockState(BlockState blockState, PacketContext packetContext) {

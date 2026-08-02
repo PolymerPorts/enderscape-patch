@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.14.+'
+	id 'net.fabricmc.fabric-loom' version '1.16.+'
 	id 'maven-publish'
 	id "com.modrinth.minotaur" version "2.+"
 }
@@ -9,12 +9,6 @@ group = project.maven_group
 
 base {
 	archivesName = project.archives_base_name
-}
-
-loom {
-	mixin {
-		useLegacyMixinAp = false
-	}
 }
 
 repositories {
@@ -65,29 +59,28 @@ repositories {
 dependencies {
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings loom.officialMojangMappings()
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	modImplementation("maven.modrinth:enderscape:3cYKvu3m") {
+	implementation("maven.modrinth:enderscape:tsjhxDOY") {
 		exclude(group: "net.fabricmc")
 	}
 
-	modImplementation 'com.github.ramixin:mixson-fabric:1.4.0'
-	modImplementation "dev.isxander:yet-another-config-lib:3.8.1+1.21.11-fabric"
-	modImplementation "maven.modrinth:lithostitched:1.5.7-fabric-1.21.11"
+	implementation 'maven.modrinth:trim-patcher:1.0-mc26.2'
+	implementation "dev.isxander:yet-another-config-lib:3.9.6+26.2-fabric"
+	implementation "maven.modrinth:lithostitched:1.7.13-fabric-26.2"
 
 
-	modImplementation include('eu.pb4:factorytools:0.9.3+1.21.11')
-	modImplementation 'eu.pb4:polymer-core:0.15.1+1.21.11'
-	modImplementation ('eu.pb4:polymer-blocks:0.15.1+1.21.11')
-	modImplementation 'eu.pb4:polymer-resource-pack:0.15.1+1.21.11'
-	modImplementation ('eu.pb4:polymer-sound-patcher:0.15.1+1.21.11')
-	modImplementation 'eu.pb4:polymer-resource-pack-extras:0.15.1+1.21.11'
-	modImplementation ('eu.pb4:polymer-autohost:0.15.1+1.21.11')
-	modImplementation 'eu.pb4:polymer-virtual-entity:0.15.1+1.21.11'
+	implementation include('eu.pb4:factorytools:0.11.2+26.2')
+	implementation 'eu.pb4:polymer-core:0.17.3+26.2'
+	implementation ('eu.pb4:polymer-blocks:0.17.3+26.2')
+	implementation 'eu.pb4:polymer-resource-pack:0.17.3+26.2'
+	implementation ('eu.pb4:polymer-sound-patcher:0.17.3+26.2')
+	implementation 'eu.pb4:polymer-resource-pack-extras:0.17.3+26.2'
+	implementation ('eu.pb4:polymer-autohost:0.17.3+26.2')
+	implementation 'eu.pb4:polymer-virtual-entity:0.17.3+26.2'
 
 
 	include(implementation(annotationProcessor("com.github.bawnorton.mixinsquared:mixinsquared-fabric:0.3.3")))
@@ -95,7 +88,7 @@ dependencies {
 	// Uncomment the following line to enable the deprecated Fabric API modules. 
 	// These are included in the Fabric API production distribution and allow you to update your mod to the latest modules at a later more convenient time.
 
-	// modImplementation "net.fabricmc.fabric-api:fabric-api-deprecated:${project.fabric_version}"
+	// implementation "net.fabricmc.fabric-api:fabric-api-deprecated:${project.fabric_version}"
 }
 
 processResources {
@@ -107,7 +100,7 @@ processResources {
 }
 
 tasks.withType(JavaCompile).configureEach {
-	it.options.release = 21
+	it.options.release = 25
 }
 
 java {
@@ -116,8 +109,8 @@ java {
 	// If you remove this line, sources will not be generated.
 	withSourcesJar()
 
-	sourceCompatibility = JavaVersion.VERSION_21
-	targetCompatibility = JavaVersion.VERSION_21
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
 }
 
 jar {

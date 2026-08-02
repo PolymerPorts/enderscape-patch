@@ -1,12 +1,14 @@
 package eu.pb4.enderscapepatch.impl;
 
-import net.bunten.enderscape.network.ClientboundDashJumpPayload;
-import net.bunten.enderscape.network.ClientboundDashJumpSoundPayload;
-import net.bunten.enderscape.network.ClientboundNebuliteOreSoundPayload;
-import net.bunten.enderscape.network.ClientboundRubbleShieldCooldownSoundPayload;
-import net.bunten.enderscape.registry.EnderscapeBlockSounds;
-import net.bunten.enderscape.registry.EnderscapeItemSounds;
-import net.bunten.enderscape.util.BlockUtil;
+import net.minecraft.world.item.ItemStackTemplate;
+import net.penumbra.enderscape.network.ClientboundDashJumpPayload;
+import net.penumbra.enderscape.network.ClientboundDashJumpSoundPayload;
+import net.penumbra.enderscape.network.ClientboundNebuliteOreSoundPayload;
+import net.penumbra.enderscape.network.ClientboundRubbleShieldCooldownSoundPayload;
+import net.penumbra.enderscape.registry.sound.EnderscapeBlockSounds;
+import net.penumbra.enderscape.registry.sound.EnderscapeItemSounds;
+import net.penumbra.enderscape.registry.sound.EnderscapeUiSounds;
+import net.penumbra.enderscape.util.BlockUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
@@ -79,7 +81,7 @@ public class PacketHandler {
                 player.connection.send(new ClientboundSoundPacket(Holder.direct(sound), SoundSource.BLOCKS, nebulite.getX(), nebulite.getY(), nebulite.getZ(), range, range, 0));
             }
         } else if (payloadx instanceof ClientboundRubbleShieldCooldownSoundPayload payload) {
-            player.connection.send(new ClientboundSoundEntityPacket(EnderscapeItemSounds.RUBBLE_SHIELD_COOLDOWN_OVER, SoundSource.MASTER, player, 1, 1, 0));
+            player.connection.send(new ClientboundSoundEntityPacket(EnderscapeUiSounds.RUBBLE_SHIELD_COOLDOWN_OVER, SoundSource.MASTER, player, 1, 1, 0));
 
         }
     }
@@ -252,6 +254,7 @@ public class PacketHandler {
     }
 
     private static void spawnItemParticles(LivingEntity entity, ItemStack stack, int count) {
+        var particle = new ItemParticleOption(ParticleTypes.ITEM, ItemStackTemplate.fromNonEmptyStack(stack));
         for (int i = 0; i < count; ++i) {
             Vec3 vec3d = new Vec3(((double) entity.getRandom().nextFloat() - 0.5) * 0.1, Math.random() * 0.1 + 0.1, 0.0);
             vec3d = vec3d.xRot(-entity.getXRot() * 0.017453292F);
@@ -261,7 +264,7 @@ public class PacketHandler {
             vec3d2 = vec3d2.xRot(-entity.getXRot() * 0.017453292F);
             vec3d2 = vec3d2.yRot(-entity.getYRot() * 0.017453292F);
             vec3d2 = vec3d2.add(entity.getX(), entity.getEyeY(), entity.getZ());
-            addParticleClient(entity.level(), new ItemParticleOption(ParticleTypes.ITEM, stack), vec3d2.x, vec3d2.y, vec3d2.z, vec3d.x, vec3d.y + 0.05, vec3d.z);
+            addParticleClient(entity.level(), particle, vec3d2.x, vec3d2.y, vec3d2.z, vec3d.x, vec3d.y + 0.05, vec3d.z);
         }
 
     }

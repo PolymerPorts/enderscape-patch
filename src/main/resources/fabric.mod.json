@@ -27,9 +27,9 @@
 	],
 	"depends": {
 		"fabricloader": ">=0.18.2",
-		"enderscape": ">=2.0.0",
-		"minecraft": ">=1.21.11 <26.0 ",
-		"java": ">=21",
+		"enderscape": ">=3.0.0",
+		"minecraft": ">=26.2 <26.3 ",
+		"java": ">=25",
 		"fabric-api": "*"
 	}
 }

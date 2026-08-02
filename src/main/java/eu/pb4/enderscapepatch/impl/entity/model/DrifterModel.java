@@ -1,8 +1,8 @@
 package eu.pb4.enderscapepatch.impl.entity.model;
 
-import eu.pb4.factorytools.api.virtualentity.emuvanilla2.EntityValueExtraction;
-import eu.pb4.factorytools.api.virtualentity.emuvanilla2.model.*;
-import net.bunten.enderscape.entity.drifter.Drifter;
+import eu.pb4.factorytools.api.virtualentity.emuvanilla.EntityValueExtraction;
+import eu.pb4.factorytools.api.virtualentity.emuvanilla.model.*;
+import net.penumbra.enderscape.entity.drifter.Drifter;
 import net.minecraft.util.Mth;
 
 

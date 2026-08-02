@@ -1,6 +1,6 @@
 package eu.pb4.enderscapepatch.impl.entity.model.rubblemite;
 
-import eu.pb4.factorytools.api.virtualentity.emuvanilla2.animation.*;
+import eu.pb4.factorytools.api.virtualentity.emuvanilla.animation.*;
 
 public class RubblemiteAnimations {
     public static final AnimationDefinition DASH = AnimationDefinition.Builder.withLength(0.25F).looping()

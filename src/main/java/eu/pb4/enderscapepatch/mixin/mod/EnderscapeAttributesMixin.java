@@ -2,10 +2,10 @@ package eu.pb4.enderscapepatch.mixin.mod;
 
 import eu.pb4.polymer.core.api.entity.PolymerEntityUtils;
 import eu.pb4.polymer.core.api.utils.PolymerSyncedObject;
-import net.bunten.enderscape.registry.EnderscapeAttributes;
 import net.minecraft.core.Holder;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.RangedAttribute;
+import net.penumbra.enderscape.registry.entity.EnderscapeAttributes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

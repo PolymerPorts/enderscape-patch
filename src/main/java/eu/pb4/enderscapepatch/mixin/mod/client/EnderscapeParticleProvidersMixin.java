@@ -1,6 +1,6 @@
 package eu.pb4.enderscapepatch.mixin.mod.client;
 
-import net.bunten.enderscape.client.registry.EnderscapeParticleProviders;
+import net.penumbra.enderscape.registry.particle.EnderscapeParticleProviders;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
