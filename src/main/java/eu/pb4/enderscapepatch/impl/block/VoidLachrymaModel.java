@@ -11,11 +11,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 import java.util.stream.IntStream;
 
 public class VoidLachrymaModel extends BlockModel {
-    public static final LazyItemStack[] MODELS = IntStream.range(0, 10)
+    public static final LazyItemStack[] MODELS = IntStream.rangeClosed(0, BlockStateProperties.MAX_LEVEL_15)
             .mapToObj(x -> ItemDisplayElementUtil.getModel(EnderscapePolymerPatch.id("block/fluid/void_lachryma/" + x))).toArray(LazyItemStack[]::new);
 
     private final ItemDisplayElement model;

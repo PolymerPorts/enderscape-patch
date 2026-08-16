@@ -1,0 +1,47 @@
+{
+	"providers": [
+		{
+			"type": "space",
+			"advances": {
+				"Ā": -8,
+				"ā": -168,
+				"Ă": -60,
+				"ă": -119,
+				"Ą": 1,
+				"ą": 5,
+				"Ć": 10,
+				"ć": 20,
+				"Ĉ": 50,
+				"ĉ": 100,
+				"Ċ": -1,
+				"ċ": -5000,
+				"Č": -2500,
+				"č": -1024,
+				"Ď": -100,
+				"ď": -50,
+				"Đ": -20,
+				"đ": -10,
+				"Ē": 2500,
+				"ē": 5000
+			}
+		},
+		{
+			"type": "bitmap",
+			"file": "enderscape-patch:sgui/invis_line.png",
+			"ascent": 7,
+			"height": 8,
+			"chars": [
+				"Ĕ"
+			]
+		},
+		{
+			"type": "bitmap",
+			"file": "enderscape-patch:sgui/death.png",
+			"ascent": 200,
+			"height": 5000,
+			"chars": [
+				"ĕ"
+			]
+		}
+	]
+}

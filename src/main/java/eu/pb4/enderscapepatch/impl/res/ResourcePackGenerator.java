@@ -1,6 +1,7 @@
 package eu.pb4.enderscapepatch.impl.res;
 
 
+import com.mojang.math.Transformation;
 import eu.pb4.enderscapepatch.impl.EnderscapePolymerPatch;
 import eu.pb4.enderscapepatch.impl.entity.model.EntityModels;
 import eu.pb4.factorytools.api.block.model.generic.BlockStateModelManager;
@@ -11,24 +12,25 @@ import eu.pb4.polymer.resourcepack.api.PolymerResourcePackUtils;
 import eu.pb4.polymer.resourcepack.api.ResourcePackBuilder;
 import eu.pb4.polymer.resourcepack.extras.api.format.atlas.AtlasAsset;
 import eu.pb4.polymer.resourcepack.extras.api.format.item.ItemAsset;
-import eu.pb4.polymer.resourcepack.extras.api.format.item.model.ConditionItemModel;
-import eu.pb4.polymer.resourcepack.extras.api.format.item.model.EmptyItemModel;
-import eu.pb4.polymer.resourcepack.extras.api.format.item.model.ItemModel;
-import eu.pb4.polymer.resourcepack.extras.api.format.item.model.SelectItemModel;
+import eu.pb4.polymer.resourcepack.extras.api.format.item.model.*;
 import eu.pb4.polymer.resourcepack.extras.api.format.item.property.bool.BooleanProperty;
 import eu.pb4.polymer.resourcepack.extras.api.format.item.property.bool.CustomModelDataFlagProperty;
 import eu.pb4.polymer.resourcepack.extras.api.format.item.property.select.ComponentSelectProperty;
 import eu.pb4.polymer.resourcepack.extras.api.format.item.property.select.CustomModelDataStringProperty;
 import eu.pb4.polymer.resourcepack.extras.api.format.item.property.select.SelectProperty;
+import eu.pb4.polymer.resourcepack.extras.api.format.item.special.EndCubeSpecialModel;
 import eu.pb4.polymer.resourcepack.extras.api.format.model.ModelAsset;
 import eu.pb4.polymer.resourcepack.extras.api.format.model.ModelElement;
 import it.unimi.dsi.fastutil.floats.FloatList;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.util.Mth;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.penumbra.enderscape.Enderscape;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
@@ -54,6 +56,7 @@ public class ResourcePackGenerator {
 
     private static void build(ResourcePackBuilder builder) {
         final var expansion = new Vec3(0.08, 0.08, 0.08);
+        final var expansionSign = new Vec3(0.04, 0.04, 0.04);
         var atlas = AtlasAsset.builder();
 
         for (var model : EntityModels.ALL) {
@@ -61,13 +64,20 @@ public class ResourcePackGenerator {
         }
 
         var voidLachrymaTexture = Enderscape.id("block/void_lachryma_still");
-        for (int i = 0; i < 10; i++) {
+        var voidLachrymaTextureSide = Enderscape.id("block/void_lachryma_flow");
+        for (int i = 0; i <= BlockStateProperties.MAX_LEVEL_15; i++) {
+            var height = i < 8 ? (float) Math.floor(Mth.lerp(i / 8f, 12, 2)) : 16;
             builder.addData("assets/enderscape-patch/models/block/fluid/void_lachryma/" + i + ".json", ModelAsset.builder()
-                            .texture("all", voidLachrymaTexture)
-                            .textureReference("particle", "all")
-                            .element(Vec3.ZERO, new Vec3(16, 12 - (i * 2 + 1) / 2, 16), element -> {
+                            .texture("top", voidLachrymaTexture)
+                            .texture("side", voidLachrymaTextureSide)
+                            .textureReference("particle", "top")
+                            .element(Vec3.ZERO, new Vec3(16, height, 16), element -> {
                                 for (var dir : Direction.values()) {
-                                    element.face(dir, "all");
+                                    if (dir.getAxis() == Direction.Axis.Y) {
+                                        element.face(dir, "top");
+                                    } else {
+                                        element.face(dir, 0, 8 - height / 2f, 8, 8, "side", null);
+                                    }
                                 }
                             })
                     .build());
@@ -101,7 +111,8 @@ public class ResourcePackGenerator {
                     if (asset.parent().isPresent()) {
                         var parentId = asset.parent().get();
                         var parentAsset = ModelAsset.fromJson(new String(Objects.requireNonNull(builder.getDataOrSource(AssetPaths.model(parentId) + ".json")), StandardCharsets.UTF_8));
-                        builder.addData(AssetPaths.model("enderscape-patch", parentId.getPath()) + ".json", ModelModifiers.expandModel(parentAsset, expansion));
+                        builder.addData(AssetPaths.model("enderscape-patch", parentId.getPath()) + ".json",
+                                ModelModifiers.expandModel(parentAsset, expandable.contains("sign") ? expansionSign : expansion));
                     }
                 }
             }
@@ -197,6 +208,12 @@ public class ResourcePackGenerator {
 
             return resource;
         }));
+
+        builder.addData("assets/enderscape/items/-/block/end_haven_core_active.json", new ItemAsset(new CompositeItemModel(List.of(
+                new SpecialItemModel(Enderscape.id("block/end_haven_core_active"), new EndCubeSpecialModel(EndCubeSpecialModel.Type.GATEWAY),
+                        Optional.of(new Transformation(new Matrix4f().translate(0.05f, 0.05f, 0.05f).scale(0.9f)))),
+                new BasicItemModel(Enderscape.id("block/end_haven_core_active"))
+        ))));
 
 
         ModelModifiers.createSignModel(builder, "enderscape", "veiled", atlas);

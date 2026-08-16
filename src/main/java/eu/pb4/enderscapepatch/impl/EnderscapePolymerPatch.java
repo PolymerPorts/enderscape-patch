@@ -44,6 +44,10 @@ public class EnderscapePolymerPatch implements ModInitializer {
     public static final List<Runnable> LATE_INIT = new ArrayList<>();
 
 
+    public static final Identifier END_HAVEN_RESPAWN_ACTION = EnderscapePolymerPatch.id("end_haven_respawn");
+    public static final Identifier RESPAWN_ACTION = EnderscapePolymerPatch.id("respawn");
+    public static final Identifier DISCONNECT_ACTION = EnderscapePolymerPatch.id("disconnect");
+
     @Override
     public void onInitialize() {
         //MixinEnvironment.getCurrentEnvironment().audit();
