@@ -29,6 +29,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.penumbra.enderscape.manager.EndHavenManager;
 import net.penumbra.enderscape.manager.VoidManager;
+import net.penumbra.enderscape.registry.entity.EnderscapeMobEffects;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -36,6 +37,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,36 +52,86 @@ public abstract class ServerPlayerEntityMixin extends Player {
     @Unique
     private float previousVoidDamage = 0;
 
+    @Unique
+    boolean isStunned = false;
+
     public ServerPlayerEntityMixin(Level level, GameProfile gameProfile) {
         super(level, gameProfile);
     }
 
     @Inject(method = "tick", at = @At("TAIL"))
     private void emulateVoidDamage(CallbackInfo ci) {
-        var voided = VoidManager.getVoidedHealth(this);
-
-        if (voided == previousVoidDamage || this.isDeadOrDying()) {
+        if (this.isDeadOrDying()) {
             return;
         }
 
-        this.previousVoidDamage = voided;
+        var voided = VoidManager.getVoidedHealth(this);
+        var list = new ArrayList<AttributeInstance>();
 
-        var instance = new AttributeInstance(Attributes.MAX_HEALTH, _ -> {
-        });
-        instance.setBaseValue(this.getMaxHealth() - voided);
+        if (voided != previousVoidDamage) {
+            this.previousVoidDamage = voided;
 
-        this.connection.send(new ClientboundUpdateAttributesPacket(this.getId(), List.of(instance)));
+            var instance = new AttributeInstance(Attributes.MAX_HEALTH, _ -> {});
+            instance.setBaseValue(this.getMaxHealth() - voided);
+            list.add(instance);
+        }
+
+        var stunned = EnderscapeMobEffects.isStunned(this);
+
+        if (stunned && !this.isStunned) {
+            for (var attr : List.of(Attributes.MOVEMENT_SPEED, Attributes.SNEAKING_SPEED, Attributes.JUMP_STRENGTH)) {
+                var instance = new AttributeInstance(attr, _ -> {});
+                instance.setBaseValue(0);
+                list.add(instance);
+            }
+            this.isStunned = true;
+        } else if (!stunned && this.isStunned) {
+            for (var attr : List.of(Attributes.MOVEMENT_SPEED,Attributes.SNEAKING_SPEED, Attributes.JUMP_STRENGTH)) {
+                var instance = new AttributeInstance(attr, _ -> {});
+                instance.setBaseValue(this.getAttributeValue(attr));
+                list.add(instance);
+            }
+            this.isStunned = false;
+        }
+
+        if (stunned) {
+            this.closeContainer();
+        }
+
+        if (!list.isEmpty()) {
+            this.connection.send(new ClientboundUpdateAttributesPacket(this.getId(), list));
+        }
     }
 
-    @WrapOperation(method = "die", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerGamePacketListenerImpl;send(Lnet/minecraft/network/protocol/Packet;)V"))
-    private void handleEndHavenDeathScreen(ServerGamePacketListenerImpl instance, Packet packet, Operation<Void> original) {
-        original.call(instance, packet);
+    @Unique
+    private void restoreAttributes() {
+        var list = new ArrayList<AttributeInstance>();
+
         if (this.previousVoidDamage != 0) {
             var attr = new AttributeInstance(Attributes.MAX_HEALTH, _ -> {
             });
             attr.setBaseValue(this.getMaxHealth());
-            this.connection.send(new ClientboundUpdateAttributesPacket(this.getId(), List.of(attr)));
+            list.add(attr);
         }
+
+        if (this.isStunned) {
+            for (var attr : List.of(Attributes.MOVEMENT_SPEED, Attributes.SNEAKING_SPEED, Attributes.JUMP_STRENGTH)) {
+                var instance = new AttributeInstance(attr, _ -> {});
+                instance.setBaseValue(this.getAttributeValue(attr));
+                list.add(instance);
+            }
+        }
+
+        if (!list.isEmpty()) {
+            this.connection.send(new ClientboundUpdateAttributesPacket(this.getId(), list));
+        }
+    }
+
+
+    @WrapOperation(method = "die", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerGamePacketListenerImpl;send(Lnet/minecraft/network/protocol/Packet;)V"))
+    private void handleEndHavenDeathScreen(ServerGamePacketListenerImpl instance, Packet packet, Operation<Void> original) {
+        original.call(instance, packet);
+        this.restoreAttributes();
 
         if (packet instanceof ClientboundPlayerCombatKillPacket(int playerId, Component message)
                 && playerId == this.getId() && EndHavenManager.promptHavenRespawnChoice(this)) {
@@ -87,15 +139,11 @@ public abstract class ServerPlayerEntityMixin extends Player {
         }
     }
 
+
     @WrapOperation(method = "die", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerGamePacketListenerImpl;send(Lnet/minecraft/network/protocol/Packet;Lio/netty/channel/ChannelFutureListener;)V"))
     private void handleEndHavenDeathScreen2(ServerGamePacketListenerImpl instance, Packet packet, ChannelFutureListener channelFutureListener, Operation<Void> original) {
         original.call(instance, packet, channelFutureListener);
-        if (this.previousVoidDamage != 0) {
-            var attr = new AttributeInstance(Attributes.MAX_HEALTH, _ -> {
-            });
-            attr.setBaseValue(this.getMaxHealth());
-            this.connection.send(new ClientboundUpdateAttributesPacket(this.getId(), List.of(attr)));
-        }
+        this.restoreAttributes();
 
         if (packet instanceof ClientboundPlayerCombatKillPacket(int playerId, Component message)
                 && playerId == this.getId() && EndHavenManager.promptHavenRespawnChoice(this)) {

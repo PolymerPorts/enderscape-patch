@@ -18,14 +18,17 @@ import eu.pb4.polymer.resourcepack.extras.api.format.item.property.bool.CustomMo
 import eu.pb4.polymer.resourcepack.extras.api.format.item.property.select.ComponentSelectProperty;
 import eu.pb4.polymer.resourcepack.extras.api.format.item.property.select.CustomModelDataStringProperty;
 import eu.pb4.polymer.resourcepack.extras.api.format.item.property.select.SelectProperty;
+import eu.pb4.polymer.resourcepack.extras.api.format.item.property.select.TrimMaterialProperty;
 import eu.pb4.polymer.resourcepack.extras.api.format.item.special.EndCubeSpecialModel;
 import eu.pb4.polymer.resourcepack.extras.api.format.model.ModelAsset;
 import eu.pb4.polymer.resourcepack.extras.api.format.model.ModelElement;
 import it.unimi.dsi.fastutil.floats.FloatList;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.equipment.trim.TrimMaterial;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.penumbra.enderscape.Enderscape;
 import net.minecraft.resources.Identifier;
@@ -103,6 +106,14 @@ public class ResourcePackGenerator {
         } catch (Throwable e) {
             e.printStackTrace();
         }
+
+        /*for (var mat : List.of("leather", "chainmail", "iron", "copper", "gold", "diamond", "netherite")) {
+            for (var type : List.of("helmet", "chestplate", "leggings", "boots")) {
+                var path = "assets/minecraft/items/" + mat + "_" + type + ".json";
+
+                builder.addData(path, builder.getDataOrSource(path));
+            }
+        }*/
 
         builder.forEachResource((string, resource) -> {
             for (var expandable : EXPANDABLE) {
@@ -205,6 +216,39 @@ public class ResourcePackGenerator {
 
                 return PackResource.fromAsset(new ItemAsset(replacer[0].modifyDeep(EmptyItemModel.INSTANCE, asset.model()), asset.properties()));
             }
+
+            /*if (string.contains("/items/") && string.endsWith(".json")) {
+                for (var type : List.of("helmet", "chestplate", "leggings", "boots")) {
+                    if (!string.contains(type)) {
+                        continue;
+                    }
+
+                    try {
+                        var asset = ItemAsset.fromJson(Objects.requireNonNull(resource.asString()));
+                        var replacer = new ItemModel.Replacer[]{null};
+                        replacer[0] = (parent, model) -> {
+                            if (model instanceof SelectItemModel<?, ?> selectItemModel && selectItemModel.switchValue().property() instanceof TrimMaterialProperty property) {
+                                var select = (SelectItemModel<?, ResourceKey<TrimMaterial>>) selectItemModel;
+                                var m = SelectItemModel.builder(property);
+                                select.transformation().ifPresent(m::transformation);
+                                select.fallback().ifPresent(m::fallback);
+                                select.switchValue().cases().forEach(x -> m.withCase(x.values(), x.model()));
+
+                                m.withCase("", )
+
+                                return m.build();
+                            }
+                            return model;
+                        };
+
+
+                        return PackResource.fromAsset(new ItemAsset(replacer[0].modifyDeep(EmptyItemModel.INSTANCE, asset.model()), asset.properties()));
+                    } catch (Throwable e) {
+                        // Wrong file type, ignore this!
+                    }
+
+                }
+            }*/
 
             return resource;
         }));
