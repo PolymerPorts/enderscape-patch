@@ -9,7 +9,7 @@ import eu.pb4.polymer.resourcepack.api.PolymerResourcePackUtils;
 import eu.pb4.polymer.resourcepack.extras.api.ResourcePackExtras;
 import eu.pb4.polymer.resourcepack.extras.api.format.item.ItemAsset;
 import eu.pb4.polymer.resourcepack.extras.api.format.item.model.BasicItemModel;
-import eu.pb4.polymer.resourcepack.extras.api.format.item.tint.MapColorTintSource;
+import eu.pb4.polymer.resourcepack.extras.api.format.item.tint.DyeTintSource;
 import eu.pb4.polymer.virtualentity.api.attachment.BlockAwareAttachment;
 import eu.pb4.polymer.virtualentity.impl.HolderHolder;
 import it.unimi.dsi.fastutil.objects.Reference2IntMap;
@@ -60,7 +60,7 @@ public class EnderscapePolymerPatch implements ModInitializer {
                 Identifier.fromNamespaceAndPath("enderscape", "block_sign")
         );
         ResourcePackExtras.forDefault().addBridgedModelsFolder(Identifier.fromNamespaceAndPath("enderscape", "entity"), (id, b) -> {
-            return new ItemAsset(new BasicItemModel(id, List.of(new MapColorTintSource(0xFFFFFF))), new ItemAsset.Properties(true, true));
+            return new ItemAsset(new BasicItemModel(id, List.of(new DyeTintSource(-1))), new ItemAsset.Properties(true, true));
         });
 
         ResourcePackGenerator.setup();

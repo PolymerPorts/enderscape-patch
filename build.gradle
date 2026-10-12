@@ -64,23 +64,22 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	implementation("maven.modrinth:enderscape:4DwOA1hE") {
+	implementation("maven.modrinth:enderscape:3.0.3+mc26.3") {
 		exclude(group: "net.fabricmc")
 	}
 
-	implementation 'maven.modrinth:trim-patcher:1.0-mc26.2'
-	implementation "dev.isxander:yet-another-config-lib:3.9.6+26.2-fabric"
-	implementation "maven.modrinth:lithostitched:1.7.13-fabric-26.2"
+	implementation "dev.isxander:yet-another-config-lib:3.9.7+26.3-fabric"
+	implementation "maven.modrinth:lithostitched:2.0.5-fabric-26.3"
 
 
-	implementation include('eu.pb4:factorytools:0.11.2+26.2')
-	implementation 'eu.pb4:polymer-core:0.17.3+26.2'
-	implementation ('eu.pb4:polymer-blocks:0.17.3+26.2')
-	implementation 'eu.pb4:polymer-resource-pack:0.17.3+26.2'
-	implementation ('eu.pb4:polymer-sound-patcher:0.17.3+26.2')
-	implementation 'eu.pb4:polymer-resource-pack-extras:0.17.3+26.2'
-	implementation ('eu.pb4:polymer-autohost:0.17.3+26.2')
-	implementation 'eu.pb4:polymer-virtual-entity:0.17.3+26.2'
+	implementation include('eu.pb4:factorytools:0.12.1+26.3')
+	implementation 'eu.pb4:polymer-core:0.18.4+26.3'
+	implementation ('eu.pb4:polymer-blocks:0.18.4+26.3')
+	implementation 'eu.pb4:polymer-resource-pack:0.18.4+26.3'
+	implementation ('eu.pb4:polymer-sound-patcher:0.18.4+26.3')
+	implementation 'eu.pb4:polymer-resource-pack-extras:0.18.4+26.3'
+	implementation ('eu.pb4:polymer-autohost:0.18.4+26.3')
+	implementation 'eu.pb4:polymer-virtual-entity:0.18.4+26.3'
 
 
 	include(implementation(annotationProcessor("com.github.bawnorton.mixinsquared:mixinsquared-fabric:0.3.3")))
